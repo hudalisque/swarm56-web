@@ -1,0 +1,25 @@
+[Unit]
+Description=Swarm56 Next.js Web
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=swarm56-web
+Group=swarm56-web
+WorkingDirectory=/opt/swarm56/web/current/app
+EnvironmentFile=/etc/swarm56/web.env
+ExecStart=/usr/bin/node server.js
+
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
