@@ -1,42 +1,36 @@
 import { prisma } from "@/lib/db/prisma";
-import type { PublishedPost } from "@/types/post";
+import type { FeedCardView } from "@/types/post";
 
-const publishedWhereClause = {
-  status: "published",
-  publishedAt: {
-    not: null,
-    lte: new Date(),
-  },
-} as const;
-
-const publishedSelectFields = {
+const activeCardSelect = {
   id: true,
-  slug: true,
+  channel: true,
   title: true,
   excerpt: true,
-  content: true,
+  thumbnailPath: true,
+  thumbnailKind: true,
+  originalUrl: true,
   publishedAt: true,
-  updatedAt: true,
 } as const;
 
-export async function findPublishedPosts(): Promise<PublishedPost[]> {
-  const posts = await prisma.post.findMany({
-    where: publishedWhereClause,
-    select: publishedSelectFields,
+// 공개 노출: status=ACTIVE, 최신순
+export async function findActiveCards(): Promise<FeedCardView[]> {
+  const rows = await prisma.feedCard.findMany({
+    where: { status: "ACTIVE" },
+    select: activeCardSelect,
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
-  return posts as PublishedPost[];
+  return rows as FeedCardView[];
 }
 
-export async function findPublishedPostBySlug(
-  slug: string
-): Promise<PublishedPost | null> {
-  const post = await prisma.post.findFirst({
-    where: {
-      slug,
-      ...publishedWhereClause,
-    },
-    select: publishedSelectFields,
-  });
-  return post as PublishedPost | null;
+// 채널별 최신 N개 (Social Hub Grid용, R5에서 사용)
+export async function findActiveCardsByChannel(
+  limitPerChannel = 5
+): Promise<Record<string, FeedCardView[]>> {
+  const rows = await findActiveCards();
+  const byChannel: Record<string, FeedCardView[]> = {};
+  for (const row of rows) {
+    const list = (byChannel[row.channel] ??= []);
+    if (list.length < limitPerChannel) list.push(row);
+  }
+  return byChannel;
 }

@@ -1,64 +1,36 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+const DAY = 86_400_000;
+const now = Date.now();
+const d = (n: number) => new Date(now - n * DAY);
 
-const seeds = [
-  {
-    slug: "welcome-to-swarm56",
-    title: "swarm56에 오신 것을 환영합니다",
-    excerpt: "개발자로 시작해 회사를 운영했고, 지금은 다시 직접 만들고 있습니다.",
-    content:
-      "swarm56은 원종석의 공개 활동을 기록하는 개인 브랜드 허브입니다. " +
-      "소프트웨어, 업무 자동화, 비즈니스 인텔리전스, AI 활용 워크플로를 직접 실험하고 기록합니다.",
-    status: "published",
-    publishedAt: new Date("2026-06-01T00:00:00.000Z"),
-  },
-  {
-    slug: "building-with-ai",
-    title: "AI와 함께 시스템을 만드는 방법",
-    excerpt: "에이전트 협업 워크플로우를 직접 구축하면서 배운 것들을 기록합니다.",
-    content:
-      "GPT 오케스트레이터와 Claude Code 실행 모델을 조합해 웹 인프라를 구축했습니다. " +
-      "각 에이전트가 명확한 역할을 가질 때 협업 품질이 높아진다는 것을 확인했습니다.",
-    status: "published",
-    publishedAt: new Date("2026-06-15T00:00:00.000Z"),
-  },
-  {
-    slug: "draft-internal-note",
-    title: "내부 메모 — 비공개",
-    excerpt: null,
-    content: "이 글은 아직 발행되지 않은 초안입니다.",
-    status: "draft",
-    publishedAt: null,
-  },
-] as const;
+// 로컬 개발용 더미 카드 (옵시디언 클리핑 전 UI 검증용).
+// INSTAGRAM은 0건 → 빈 채널 placeholder 검증용.
+const cards = [
+  { channel: "NAVER_BLOG", title: "네이버 블로그 샘플 글 1", excerpt: "로컬 시드용 더미 글입니다.", originalUrl: "https://blog.naver.com/acepetra/sample1", publishedAt: d(1), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "NAVER_BLOG", title: "네이버 블로그 샘플 글 2", excerpt: "두 번째 더미.", originalUrl: "https://blog.naver.com/acepetra/sample2", publishedAt: d(3), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "YOUTUBE", title: "유튜브 영상 샘플", excerpt: "영상 설명 더미.", originalUrl: "https://youtube.com/watch?v=sample", publishedAt: d(2), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "GITHUB", title: "Release v0.1.0", excerpt: "깃헙 릴리스 더미.", originalUrl: "https://github.com/hudalisque/swarm56-web/releases/tag/v0.1.0", publishedAt: d(4), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "NOTION", title: "노션 페이지 샘플", excerpt: "노션 더미.", originalUrl: "https://notion.so/sample", publishedAt: d(5), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "LINKEDIN", title: "링크드인 포스트 샘플", excerpt: "링크드인 더미.", originalUrl: "https://linkedin.com/posts/sample", publishedAt: d(6), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "FACEBOOK", title: "페이스북 글 샘플", excerpt: "페북 더미.", originalUrl: "https://facebook.com/sample", publishedAt: d(7), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "SWARM", title: "Swarm 체크인 샘플", excerpt: "Foursquare Swarm 체크인 더미.", originalUrl: "https://swarmapp.com/c/sample", publishedAt: d(8), thumbnailKind: "DEFAULT", status: "ACTIVE" },
+  { channel: "NAVER_BLOG", title: "비활성 샘플(INACTIVE)", excerpt: "노출 안 됨.", originalUrl: "https://blog.naver.com/acepetra/inactive", publishedAt: d(9), thumbnailKind: "DEFAULT", status: "INACTIVE" },
+  { channel: "GITHUB", title: "삭제 샘플(DELETED)", excerpt: "삭제됨.", originalUrl: "https://github.com/hudalisque/swarm56-web/deleted", publishedAt: d(10), thumbnailKind: "DEFAULT", status: "DELETED" },
+];
 
 async function main() {
-  console.log("Seeding database...");
-
-  for (const seed of seeds) {
-    const post = await prisma.post.upsert({
-      where: { slug: seed.slug },
-      update: {
-        title: seed.title,
-        excerpt: seed.excerpt ?? null,
-        content: seed.content,
-        status: seed.status,
-        publishedAt: seed.publishedAt ?? null,
-      },
-      create: {
-        slug: seed.slug,
-        title: seed.title,
-        excerpt: seed.excerpt ?? null,
-        content: seed.content,
-        status: seed.status,
-        publishedAt: seed.publishedAt ?? null,
-      },
+  console.log("Seeding FeedCard...");
+  for (const c of cards) {
+    await prisma.feedCard.upsert({
+      where: { originalUrl: c.originalUrl },
+      update: { title: c.title, excerpt: c.excerpt, status: c.status, thumbnailKind: c.thumbnailKind, publishedAt: c.publishedAt },
+      create: c,
     });
-    console.log(`  upserted: ${post.slug} (id: ${post.id})`);
   }
-
-  console.log(`Seeding complete. Total upserted: ${seeds.length}`);
+  const total = await prisma.feedCard.count();
+  console.log(`[seed] feedCard upserted: ${cards.length}, total rows: ${total}`);
 }
 
 main()

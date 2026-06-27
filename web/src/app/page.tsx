@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { HeroSection } from "@/components/hero-section";
 import { PostList } from "@/components/post-list";
 import { SiteFooter } from "@/components/site-footer";
-import { findPublishedPosts } from "@/lib/repositories/post-repository";
+import { findActiveCards } from "@/lib/repositories/post-repository";
 
 const CHANNELS = [
   {
@@ -64,7 +64,7 @@ const PROJECTS = [
 
 export default async function HomePage() {
   await connection();
-  const posts = await findPublishedPosts();
+  const cards = await findActiveCards();
 
   return (
     <>
@@ -197,7 +197,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-bold text-slate-900 mb-10">
               최근 기록
             </h2>
-            <PostList posts={posts} />
+            <PostList cards={cards} />
           </div>
         </section>
 

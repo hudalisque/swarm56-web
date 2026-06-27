@@ -7,6 +7,10 @@ deploy/migrator/node_modules/
 web/.next/
 web/out/
 web/build/
+**/.next/
+
+# 로컬 데이터 (옵시디언 볼트 스탠드인 + 썸네일 캐시)
+.local-data/
 
 # SQLite databases
 *.db
@@ -34,5 +38,6 @@ Thumbs.db
 *.tsbuildinfo
 web/next-env.d.ts
 
-# Release artifacts
+# Release artifacts / 업로드 아카이브
 *.tar.gz
+*.zip

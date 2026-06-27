@@ -16,9 +16,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:status": "prisma migrate status",
-    "verify:phase2-2": "tsx scripts/verify-phase2-2.ts",
-    "smoke:phase2-4": "tsx scripts/smoke-test-phase2-4.ts"
+    "db:status": "prisma migrate status"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

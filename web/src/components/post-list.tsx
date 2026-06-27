@@ -1,9 +1,9 @@
-import type { PublishedPost } from "@/types/post";
+import type { FeedCardView } from "@/types/post";
 import { PostCard } from "@/components/post-card";
 import { EmptyPosts } from "@/components/empty-posts";
 
-export function PostList({ posts }: { posts: PublishedPost[] }) {
-  if (posts.length === 0) {
+export function PostList({ cards }: { cards: FeedCardView[] }) {
+  if (cards.length === 0) {
     return <EmptyPosts />;
   }
 
@@ -13,9 +13,9 @@ export function PostList({ posts }: { posts: PublishedPost[] }) {
       role="list"
       aria-label="최근 기록 목록"
     >
-      {posts.map((post) => (
-        <div key={post.id} role="listitem">
-          <PostCard post={post} />
+      {cards.map((card) => (
+        <div key={card.id} role="listitem">
+          <PostCard card={card} />
         </div>
       ))}
     </div>
