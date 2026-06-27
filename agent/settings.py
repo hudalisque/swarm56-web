@@ -10,13 +10,22 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent  # homepage_project/
 
 DB_PATH = os.environ.get(
-    "SWARM56_DB_PATH", str(PROJECT_ROOT / "web" / "prisma" / "dev.db")
+    "SWARM56_DB_PATH",
+    str(PROJECT_ROOT / "personal-brand-hub" / "prisma" / "dev.db"),
 )
 VAULT_DIR = os.environ.get(
     "SWARM56_VAULT_DIR", str(PROJECT_ROOT / ".local-data" / "vault")
 )
 
 NAVER_BLOG_ID = os.environ.get("SWARM56_NAVER_BLOG_ID", "acepetra")
+GITHUB_USER = os.environ.get("SWARM56_GITHUB_USER", "hudalisque")
+YOUTUBE_CHANNEL = os.environ.get("SWARM56_YOUTUBE_CHANNEL", "@jongsukwon1497")
+# Notion DB id는 비밀 아님(기본값 OK). 토큰은 비밀 → env로만(코드/Git 금지).
+NOTION_DATABASE_ID = os.environ.get(
+    "SWARM56_NOTION_DATABASE_ID", "f75cf5da3cbb4823bbe642a199a6f462"
+)
+NOTION_TOKEN = os.environ.get("SWARM56_NOTION_TOKEN", "")
+FOURSQUARE_TOKEN = os.environ.get("SWARM56_FOURSQUARE_TOKEN", "")
 
 # R3 vertical slice: 채널당 처리 상한 (네트워크/비용 보호)
 MAX_PER_CHANNEL = int(os.environ.get("SWARM56_MAX_PER_CHANNEL", "5"))

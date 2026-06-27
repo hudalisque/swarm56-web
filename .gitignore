@@ -12,6 +12,10 @@ web/build/
 # 로컬 데이터 (옵시디언 볼트 스탠드인 + 썸네일 캐시)
 .local-data/
 
+# Python
+__pycache__/
+*.pyc
+
 # SQLite databases
 *.db
 *.db-journal
