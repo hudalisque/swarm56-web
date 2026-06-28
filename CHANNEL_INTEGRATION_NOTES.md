@@ -15,7 +15,7 @@
 | Swarm | ✅ 라이브 | Foursquare v2 `users/self/checkins` | OAuth user token |
 | Instagram | ✅ 라이브 | Graph API `/me/media` | 비즈니스 계정 + 토큰(자동갱신) |
 | **Facebook** | ❌ **중단** | (아래) | 공식 API 불가 |
-| **LinkedIn** | ⏳ 시도 예정 | (아래) | — |
+| **LinkedIn** | ❌ **중단** | 세션 쿠키 시도→차단(999) | 공식 API 불가 |
 
 비밀 토큰은 서버 `/etc/swarm56/agent.env`(root:ubuntu 0640)에만. 코드/Git 미포함.
 
@@ -59,11 +59,17 @@
 
 ---
 
-## LinkedIn — ⏳ 시도 예정
+## LinkedIn — ❌ 중단 (세션 방식도 차단됨)
 
-- **공식 API**: 파트너 프로그램 승인(수주~수개월) 필요 + 본인 피드/글 읽기(`r_member_social`) 제한 → 개인 프로젝트엔 비현실적.
-- **계획**: 본인 세션 쿠키(`li_at`) 기반 자체 수집 시도 예정. (대안: Unipile/Phyllo 유료 통합 API)
-- FB mbasic 교훈상, 세션 스크래핑은 쿠키 세트·헤더·HTML 구조에 민감 → 결과는 시도 후 이 문서에 추가.
+- **공식 API**: 파트너 프로그램 승인(수주~) + 본인 피드/글 읽기(`r_member_social`) 제한 → 비현실적. 조직 페이지도 없음(1인기업).
+- **세션 쿠키(li_at + JSESSIONID) 시도 결과** (2026-06-28):
+  - voyager `/me` → ✅ **200** (쿠키 유효, 신원 확인됨)
+  - `identity/profileUpdatesV2` (구 글 목록 API) → ❌ **403** (폐기/차단)
+  - `/in/{id}/recent-activity/all/` HTML → ❌ **999** (LinkedIn 봇 차단 코드)
+  - voyager `graphql` → ❌ CSRF 실패 + 유효 `queryId` 필요(수시 변경)
+  - **결론: 쿠키 인증은 되나 글 읽기는 전부 차단.** Peter 합의대로 중단.
+- **재시도하려면**: voyager graphql의 현재 `queryId`를 라이브 JS 번들에서 매번 추출해야 하고 LinkedIn이 수시로 변경 + 999 봇차단 → 유지보수 지옥. 현실적 대안은 Unipile/Phyllo 유료 API뿐.
+- 코드 미작성(동작 안 함).
 
 ---
 
