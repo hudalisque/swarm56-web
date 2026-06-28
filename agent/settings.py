@@ -26,6 +26,14 @@ NOTION_DATABASE_ID = os.environ.get(
 )
 NOTION_TOKEN = os.environ.get("SWARM56_NOTION_TOKEN", "")
 FOURSQUARE_TOKEN = os.environ.get("SWARM56_FOURSQUARE_TOKEN", "")
+INSTAGRAM_TOKEN = os.environ.get("SWARM56_INSTAGRAM_TOKEN", "")
+FACEBOOK_TOKEN = os.environ.get("SWARM56_FACEBOOK_TOKEN", "")
+FACEBOOK_PAGE_ID = os.environ.get("SWARM56_FACEBOOK_PAGE_ID", "")
+# IG 장기 토큰(60일)은 매 실행 시 refresh해 이 파일에 갱신 저장(env 토큰은 최초 seed).
+# 서버에선 ubuntu 쓰기 가능 경로로 override: SWARM56_IG_TOKEN_FILE=/var/lib/swarm56/ig_token
+IG_TOKEN_FILE = os.environ.get(
+    "SWARM56_IG_TOKEN_FILE", str(PROJECT_ROOT / ".local-data" / "ig_token")
+)
 
 # R3 vertical slice: 채널당 처리 상한 (네트워크/비용 보호)
 MAX_PER_CHANNEL = int(os.environ.get("SWARM56_MAX_PER_CHANNEL", "5"))

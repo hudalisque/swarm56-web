@@ -7,7 +7,7 @@ watchdog/무한 loop 없음.
 from . import settings, db
 from .vault import write_md
 from .thumbnail import save_from_url
-from .collectors import naver_blog, github, youtube, notion, swarm
+from .collectors import naver_blog, github, youtube, notion, swarm, instagram, facebook
 
 
 def run_channel(conn, channel: str, fetch_fn) -> None:
@@ -59,6 +59,8 @@ def main() -> None:
         run_channel(conn, "YOUTUBE", youtube.fetch)
         run_channel(conn, "NOTION", notion.fetch)
         run_channel(conn, "SWARM", swarm.fetch)
+        run_channel(conn, "INSTAGRAM", instagram.fetch)
+        run_channel(conn, "FACEBOOK", facebook.fetch)
     finally:
         conn.close()
 
