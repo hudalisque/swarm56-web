@@ -18,18 +18,23 @@ if (Test-Path $agentEnv) {
   Write-Host "[env] agent.env 로드됨 (토큰/LLM 포함)"
 }
 
-Write-Host "[1/4] 클리퍼 실행 → 볼트 + dev.db 데이터 생성"
+Write-Host "[1/4] dev.db 초기화 + 마이그레이션 (빈 DB에 스키마+이력 생성 → P3005 방지)"
+Push-Location $web
+$env:DATABASE_URL = "file:./dev.db"
+# 기존 dev.db 제거: 이전 수동적용/클리퍼가 만든 테이블이 남으면 migrate deploy가 P3005(스키마 not empty)
+Remove-Item -Force ".\prisma\dev.db", ".\prisma\dev.db-wal", ".\prisma\dev.db-shm" -ErrorAction SilentlyContinue
+npx prisma generate | Out-Null
+npx prisma migrate deploy
+Pop-Location
+
+Write-Host "[2/4] 클리퍼 실행 → 볼트 + dev.db 데이터 (마이그레이션된 스키마에 파생)"
 $env:PYTHONIOENCODING = "utf-8"
 $env:SWARM56_VAULT_DIR = $vault
 Push-Location $root
 python -m agent.main
 Pop-Location
 
-Write-Host "[2/4] web dev.db 마이그레이션"
 Push-Location $web
-$env:DATABASE_URL = "file:./dev.db"
-npx prisma generate | Out-Null
-npx prisma migrate deploy
 
 Write-Host "[3/4] 테스트 admin 비번 해시 + 세션 시크릿 생성 (비번: verify1234)"
 $hash   = node -e "console.log(require('bcryptjs').hashSync('verify1234',10))"
