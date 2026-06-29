@@ -45,3 +45,6 @@ web/next-env.d.ts
 # Release artifacts / 업로드 아카이브
 *.tar.gz
 *.zip
+
+# SSH 키 등 비밀 — 절대 커밋 금지
+*.pem
