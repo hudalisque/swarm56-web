@@ -22,7 +22,7 @@ GITHUB_USER = os.environ.get("SWARM56_GITHUB_USER", "hudalisque")
 YOUTUBE_CHANNEL = os.environ.get("SWARM56_YOUTUBE_CHANNEL", "@jongsukwon1497")
 # Notion DB id는 비밀 아님(기본값 OK). 토큰은 비밀 → env로만(코드/Git 금지).
 NOTION_DATABASE_ID = os.environ.get(
-    "SWARM56_NOTION_DATABASE_ID", "f75cf5da3cbb4823bbe642a199a6f462"
+    "SWARM56_NOTION_DATABASE_ID", "38d6855569978076822bd6a41125b90a"  # v5 전용 클린 DB
 )
 NOTION_TOKEN = os.environ.get("SWARM56_NOTION_TOKEN", "")
 FOURSQUARE_TOKEN = os.environ.get("SWARM56_FOURSQUARE_TOKEN", "")
@@ -45,6 +45,11 @@ THUMBNAIL_DIR = os.environ.get(
 THUMB_MAX_WIDTH = 640
 THUMB_ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 THUMB_MAX_DOWNLOAD_BYTES = 8_000_000  # 8MB 원본 상한
+
+# 본문 이미지 (볼트 raw/<채널>/_assets/) — v5
+IMG_MAX_WIDTH = 1280            # 본문 이미지 최대 폭(개인 규모·고화질 없음 → 넉넉)
+IMG_MAX_BYTES = 8_000_000       # 1장 다운로드 상한(안전망)
+DISK_STOP_PERCENT = 90          # 디스크 사용률 임계 — 초과 시 신규 이미지 다운로드 중단
 
 HTTP_TIMEOUT = 15
 USER_AGENT = (

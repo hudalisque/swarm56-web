@@ -7,25 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 옵시디언에서 파생된 홈페이지 카드 캐시 (전문 아님 — 전문은 옵시디언 Vault md)
+// 옵시디언 볼트(md)에서 파생된 홈피 카드 캐시. 전문/이미지는 볼트에, 여기엔 카드 표시용만.
+// v5: status·thumbnailKind·contentHash 제거. 삭제 의도는 SuppressionRecord가 보존.
 model FeedCard {
   id            String   @id @default(cuid())
   channel       String   // NAVER_BLOG|NOTION|YOUTUBE|GITHUB|LINKEDIN|INSTAGRAM|FACEBOOK|SWARM
   title         String
   excerpt       String?
-  thumbnailPath String?
-  thumbnailKind String   @default("NONE") // ORIGINAL|DEFAULT|NONE
-  originalUrl   String   @unique           // 1차 dedup + 카드 클릭 대상
-  vaultPath     String?                    // 대응하는 옵시디언 md 경로
-  contentHash   String?                    // 원본 변경 감지(upsert)
+  thumbnailPath String?                    // 대표 이미지(볼트 _assets) → Nginx 서빙. 없으면 기본 이미지
+  originalUrl   String   @unique           // 1차 dedup + 카드 클릭 대상 + 삭제 매칭 키
+  vaultPath     String?                    // 대응 옵시디언 md 경로
   publishedAt   DateTime
-  status        String   @default("ACTIVE") // ACTIVE|INACTIVE|DELETED
   externalId    String?                    // 보조 dedup
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@unique([channel, externalId])
-  @@index([channel, status, publishedAt])
+  @@index([channel, publishedAt])
+}
+
+// 삭제 의도 보존(방식 B). 활성(restoredAt=null) URL은 파생/재파생에서 스킵 → 부활 X.
+model SuppressionRecord {
+  id          String    @id @default(cuid())
+  originalUrl String    @unique           // 삭제 매칭 키(재파생 후에도 안정)
+  vaultPath   String?
+  deletedAt   DateTime  @default(now())
+  deletedBy   String                       // 감사: who
+  reason      String?
+  restoredAt  DateTime?                    // null = 활성 suppression / 값 있으면 복원됨
+
+  @@index([restoredAt])
+}
+
+// 관리자 작업 감사 로그 (who / when / target)
+model AdminAudit {
+  id     String   @id @default(cuid())
+  action String   // DELETE|RESTORE|EDIT|CLIP_NOW|FORCE_RECLIP
+  target String?  // originalUrl 등
+  actor  String   // who
+  at     DateTime @default(now())          // when
+  detail String?
+
+  @@index([at])
 }
 
 // 클리핑/동기화 실행 로그
