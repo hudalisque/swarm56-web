@@ -17,12 +17,13 @@ function ymd(d: Date): string {
   return new Date(d).toISOString().slice(0, 10);
 }
 
-// SQLite FeedCard(ACTIVE) → 채널별 v0 FeedItem (채널당 최신 5개)
+// SQLite FeedCard → 채널별 FeedItem (채널당 최신 5개).
+// v5: status 없음(삭제=행 제거+SuppressionRecord) → FeedCard에 있는 건 모두 노출 대상.
+// 썸네일은 thumbnailPath(=/vault/<채널>/_assets/...; Nginx alias가 볼트에서 서빙).
 export async function getItemsByChannel(): Promise<
   Record<ChannelId, FeedItem[]>
 > {
   const rows = await prisma.feedCard.findMany({
-    where: { status: "ACTIVE" },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     select: {
       channel: true,
@@ -31,7 +32,6 @@ export async function getItemsByChannel(): Promise<
       originalUrl: true,
       publishedAt: true,
       thumbnailPath: true,
-      thumbnailKind: true,
     },
   });
 
@@ -46,8 +46,7 @@ export async function getItemsByChannel(): Promise<
       excerpt: r.excerpt ?? "",
       date: ymd(r.publishedAt),
       url: r.originalUrl,
-      thumbnail:
-        r.thumbnailKind === "ORIGINAL" && r.thumbnailPath ? r.thumbnailPath : "",
+      thumbnail: r.thumbnailPath ?? "",
     });
   }
   return out;
