@@ -12,7 +12,7 @@ export function HeroSection() {
         {/* Left: headline */}
         <div>
           <p className="mb-4 inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-            Founder · CEO · CFO · Builder
+            AI-native Solopreneur | Creator
           </p>
           <h1 className="text-pretty text-3xl font-bold leading-tight tracking-tight text-ink md:text-[2.6rem] md:leading-[1.2]">
             개발자로 시작해 회사를 운영했고, 지금은 다시 직접 만들고 있습니다.
