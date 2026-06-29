@@ -46,21 +46,9 @@
   .step-name { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
   .step-detail { font-size: 12px; color: #64748b; }
   .agent-cell { font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; color: #0f172a; }
-  .mermaid { display: flex; justify-content: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 12px; margin-bottom: 8px; overflow-x: auto; }
   .diagram-cap { font-size: 11px; color: #64748b; margin: 0 0 18px; padding-left: 2px; line-height: 1.6; }
+  .code-block.diagram { line-height: 1.5; }
 </style>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'base',
-    themeVariables: {
-      primaryColor: '#eff6ff', primaryBorderColor: '#2563eb', primaryTextColor: '#0f172a',
-      lineColor: '#475569', secondaryColor: '#f0fdf4', tertiaryColor: '#fff7ed',
-      fontFamily: 'Noto Sans KR, sans-serif', fontSize: '13px'
-    }
-  });
-</script>
 </head>
 <body>
 <div class="page">
@@ -167,51 +155,42 @@
       <p>이 프로젝트의 심장은 <strong>"8개 채널에 흩어진 글이 어떻게 자동으로 홈페이지의 통합 피드가 되는가"</strong>다. 흐름은 <strong>단방향</strong>이며, 각 단계가 파일/DB에 상태를 남겨(상태 영속성) 언제든 재개할 수 있다.</p>
 
       <h3>5.1 전체 데이터 흐름 (수집 → 허브)</h3>
-      <pre class="mermaid">
-flowchart TB
-  subgraph SRC["① 8개 소셜 채널 — 흩어진 발행"]
-    direction LR
-    C1[네이버블로그]
-    C2[GitHub]
-    C3[YouTube]
-    C4[Notion]
-    C5[Swarm]
-    C6[Instagram]
-    C7["LinkedIn*"]
-    C8["Facebook*"]
-  end
-  SRC --> COL["② 클리핑 에이전트<br/>collectors 채널별 수집기"]
-  COL -->|"Phase A — 전문 md + 본문이미지 webp + 링크치환 + LLM 발췌 (dedup=content_hash)"| VAULT[("③ 옵시디언 볼트 = 메인 DB<br/>raw/채널/*.md + _assets/*.webp<br/>원본 영속 보관")]
-  VAULT -->|"Phase B — 파생 (활성 suppression URL 스킵)"| DB[("④ SQLite 파생캐시<br/>site-v5.db · FeedCard")]
-  DB --> WEB["⑤ 홈페이지 swarm56.com<br/>통합 카드 피드 + 채널 필터"]
-  DB --> ADMIN["백오피스 /admin<br/>삭제 · 복원 · 편집"]
-  ADMIN -.->|"삭제의도 = SuppressionRecord"| DB
-  ADMIN -.->|"수동 트리거 파일"| COL
-  VAULT -.->|"이미지 /vault/ alias"| WEB
-      </pre>
-      <p class="diagram-cap">* LinkedIn·Facebook은 현재 빈 채널(공식 API 제약). <strong>Phase A</strong>=클립(중복은 content_hash로 제거), <strong>Phase B</strong>=파생(홈피/백오피스는 캐시를 읽기 전용으로 소비).</p>
+      <div class="code-block diagram"><span class="comment">① 8개 소셜 채널 (가로로 통합 수집)</span>
+<span class="hl">네이버블로그 · GitHub · YouTube · Notion · Swarm · Instagram · LinkedIn* · Facebook*</span>
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>
+<span class="hl">② 클리핑 에이전트</span>   <span class="arrow">────</span>   <span class="comment">collectors/ 채널별 수집기</span>
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>   <span class="key">Phase A</span>  <span class="comment">전문 md + 본문이미지(webp) + 링크치환 + LLM 발췌  (dedup = content_hash)</span>
+<span class="hl">③ 옵시디언 볼트 = 메인 DB</span>   <span class="arrow">────</span>   <span class="key">raw/&lt;채널&gt;/*.md + _assets/*.webp</span>   <span class="comment">· 원본 영속 보관</span>
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>   <span class="key">Phase B</span>  <span class="comment">파생 — 활성 suppression URL 스킵</span>
+<span class="hl">④ SQLite 파생캐시</span>   <span class="arrow">────</span>   <span class="key">site-v5.db · FeedCard</span>   <span class="comment">· 홈피·백오피스는 읽기 전용</span>
+        <span class="arrow">│</span>
+        <span class="arrow">├─────────────────────┐</span>
+        <span class="arrow">▼</span>                     <span class="arrow">▼</span>
+<span class="hl">⑤ 홈페이지 swarm56.com</span>       <span class="hl">백오피스 /admin</span>
+<span class="comment">  통합 카드 피드 + 채널 필터</span>       <span class="comment">삭제 · 복원 · 편집</span>
+                              <span class="arrow">├─</span> <span class="comment">삭제의도 → SuppressionRecord (DB)</span>
+                              <span class="arrow">└─</span> <span class="comment">수동 트리거 → 클리핑 에이전트 재실행</span></div>
+      <p class="diagram-cap">단방향 흐름. <strong>Phase A</strong>=클립(중복은 content_hash로 제거), <strong>Phase B</strong>=파생(읽기 전용 소비). * LinkedIn·Facebook은 현재 빈 채널.</p>
 
       <h3>5.2 삭제 영속성 — "방식 B" (tombstone)</h3>
-      <pre class="mermaid">
-flowchart LR
-  DEL["관리자: 카드 삭제"] --> R["FeedCard 제거<br/>+ 활성 SuppressionRecord (tombstone)"]
-  R --> RE["이후 재파생 / 재수집"]
-  RE -->|"suppression URL 스킵"| NO["부활하지 않음 ✓"]
-  RES["관리자: 복원"] --> T["tombstone 해제<br/>+ 볼트 md 재삽입"]
-  T --> BACK["다시 노출"]
-      </pre>
+      <div class="code-block diagram"><span class="key">[삭제]</span>  <span class="hl">카드 삭제</span>  <span class="arrow">──▶</span>  <span class="hl">FeedCard 제거</span> <span class="comment">+ 활성</span> <span class="hl">SuppressionRecord</span> <span class="comment">(tombstone)</span>
+                                <span class="arrow">│</span>
+                                <span class="arrow">▼</span>   <span class="comment">재파생 / 재수집 시</span>
+                          <span class="comment">suppression URL 스킵</span>  <span class="arrow">──▶</span>  <span class="hl">부활하지 않음 ✓</span>
+
+<span class="key">[복원]</span>  <span class="comment">tombstone 해제 + 볼트 md 재삽입</span>  <span class="arrow">──▶</span>  <span class="hl">다시 노출</span></div>
       <p class="diagram-cap">삭제 키 = <code>originalUrl</code>. 모든 변경은 원자적 트랜잭션 — 재실행해도 안전(멱등).</p>
 
       <h3>5.3 배포 토폴로지</h3>
-      <pre class="mermaid">
-flowchart LR
-  U["방문자"] -->|"HTTPS 443"| NGINX["Nginx + Let's Encrypt"]
-  NGINX -->|"reverse proxy :3000"| NEXT["swarm56-web<br/>Next.js · npm start"]
-  NGINX -->|"/vault/ alias"| IMG["볼트 이미지 webp"]
-  NEXT -->|"읽기"| DB[("site-v5.db")]
-  TIMER["swarm56-agent.timer<br/>매일 04:00"] --> AGENT["클리핑 에이전트"] --> VAULTD[("옵시디언 볼트")]
-  VAULTD --> DB
-      </pre>
+      <div class="code-block diagram"><span class="hl">방문자</span>  <span class="arrow">──</span> <span class="comment">HTTPS 443</span> <span class="arrow">──▶</span>  <span class="hl">Nginx</span> <span class="comment">(+ Let's Encrypt)</span>
+          <span class="arrow">│</span>
+          <span class="arrow">├──</span> <span class="comment">reverse proxy :3000</span> <span class="arrow">──▶</span>  <span class="hl">swarm56-web</span> <span class="comment">(Next.js)</span>  <span class="arrow">──▶</span>  <span class="key">site-v5.db</span>
+          <span class="arrow">└──</span> <span class="comment">/vault/ alias</span> <span class="arrow">──▶</span>  <span class="hl">볼트 이미지 (webp)</span>
+
+<span class="hl">swarm56-agent.timer</span> <span class="comment">(매일 04:00)</span>  <span class="arrow">──▶</span>  <span class="hl">클리핑 에이전트</span>  <span class="arrow">──▶</span>  <span class="hl">옵시디언 볼트</span>  <span class="arrow">──▶</span> <span class="comment">(파생)</span> <span class="key">site-v5.db</span></div>
       <p class="diagram-cap">Lightsail 54.116.19.34 (Ubuntu) · 앱 <code>/opt/swarm56/app</code> · 볼트 <code>/var/lib/swarm56/vault-v5</code> · DB <code>/var/lib/swarm56/web/site-v5.db</code>.</p>
     </div>
 
