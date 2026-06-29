@@ -7,13 +7,12 @@ const MAX_AGE = 60 * 60 * 12 // 12h
 
 function secret(): string {
   const s = process.env.SESSION_SECRET
-  if (s) return s
-  // fail-closed: 프로덕션에선 SESSION_SECRET 없으면 즉시 차단(알려진 서명키 fallback 금지)
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("SESSION_SECRET 환경변수가 필요합니다 (프로덕션 fail-closed)")
+  // fail-closed: 환경에 무관하게 SESSION_SECRET 미설정 시 즉시 차단.
+  // 하드코딩 fallback 서명키 없음(알려진 키로 세션 위조 불가).
+  if (!s) {
+    throw new Error("SESSION_SECRET 환경변수가 필요합니다 (fail-closed: 하드코딩 fallback 없음)")
   }
-  // 개발 전용 — 프로덕션 경로에선 위에서 throw됨
-  return "dev-only-not-for-production"
+  return s
 }
 function sign(payload: string): string {
   return crypto.createHmac("sha256", secret()).update(payload).digest("hex")

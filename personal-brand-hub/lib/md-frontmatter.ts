@@ -17,15 +17,16 @@ export function parseFrontmatter(text: string): Record<string, string> {
   return fm
 }
 
-/** 볼트 md(relPath)의 frontmatter 읽기. traversal 차단. (읽기 전용 — 볼트에 안 씀) */
+/** 볼트 md(relPath)의 frontmatter 읽기. traversal 차단. (읽기 전용 — 볼트에 안 씀)
+ *  볼트는 프로젝트 밖 런타임 경로 → path/fs 호출에 turbopackIgnore 코멘트로 NFT 과추적 방지. */
 export function readVaultMd(relPath: string): Record<string, string> | null {
   const root = vaultRoot()
   if (!root || !relPath) return null
-  const base = path.resolve(root)
-  const full = path.resolve(base, relPath)
+  const base = path.resolve(/*turbopackIgnore: true*/ root)
+  const full = path.resolve(/*turbopackIgnore: true*/ base, relPath)
   if (full !== base && !full.startsWith(base + path.sep)) return null // traversal 방지
   try {
-    return parseFrontmatter(fs.readFileSync(full, "utf-8"))
+    return parseFrontmatter(fs.readFileSync(/*turbopackIgnore: true*/ full, "utf-8"))
   } catch {
     return null
   }

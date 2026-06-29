@@ -69,30 +69,26 @@ export async function editCard(originalUrl: string, title: string, excerpt: stri
   ])
 }
 
-/** "지금 클리핑" — 트리거 파일만 기록(web→python 직접 spawn 금지). systemd path-unit이 감지해 실행.
- *  쓰기 실패 시 성공으로 위장하지 않음: 실패 audit + 에러 전파(UI에 실패 노출). */
-export async function triggerClip(actor: string) {
-  const f = process.env.SWARM56_CLIP_TRIGGER || "/var/lib/swarm56/triggers/clip.now"
+/** 트리거 파일 1건 기록 (web→python 직접 spawn 금지; systemd path-unit이 감지해 실행).
+ *  볼트/트리거는 프로젝트 밖 런타임 경로 → fs/path 호출에 turbopackIgnore 코멘트(NFT 과추적 방지).
+ *  쓰기 실패 시 성공 위장하지 않고 실패 audit + 에러 전파. */
+async function writeTrigger(filePath: string, action: string, actor: string) {
   try {
-    fs.mkdirSync(path.dirname(f), { recursive: true })
-    fs.writeFileSync(f, String(Date.now()))
+    fs.mkdirSync(/*turbopackIgnore: true*/ path.dirname(filePath), { recursive: true })
+    fs.writeFileSync(/*turbopackIgnore: true*/ filePath, String(Date.now()))
   } catch (e) {
-    await audit("CLIP_NOW_FAILED", null, actor, String(e))
-    throw new Error(`클리핑 트리거 기록 실패: ${e}`)
+    await audit(`${action}_FAILED`, null, actor, String(e))
+    throw new Error(`${action} 트리거 기록 실패: ${e}`)
   }
-  await audit("CLIP_NOW", null, actor)
+  await audit(action, null, actor)
 }
 
-/** "강제 갱신"(#10) — force 트리거 파일 기록. systemd path-unit이 SWARM56_FORCE=1로 에이전트 실행.
- *  쓰기 실패 시 실패 audit + 에러 전파. */
+/** "지금 클리핑" — 트리거 파일 기록. systemd path-unit이 감지해 에이전트 실행. */
+export async function triggerClip(actor: string) {
+  await writeTrigger(process.env.SWARM56_CLIP_TRIGGER || "/var/lib/swarm56/triggers/clip.now", "CLIP_NOW", actor)
+}
+
+/** "강제 갱신"(#10) — force 트리거 파일 기록. systemd path-unit이 SWARM56_FORCE=1로 에이전트 실행. */
 export async function triggerForceReclip(actor: string) {
-  const f = process.env.SWARM56_FORCE_TRIGGER || "/var/lib/swarm56/triggers/force.now"
-  try {
-    fs.mkdirSync(path.dirname(f), { recursive: true })
-    fs.writeFileSync(f, String(Date.now()))
-  } catch (e) {
-    await audit("FORCE_RECLIP_FAILED", null, actor, String(e))
-    throw new Error(`강제 갱신 트리거 기록 실패: ${e}`)
-  }
-  await audit("FORCE_RECLIP", null, actor)
+  await writeTrigger(process.env.SWARM56_FORCE_TRIGGER || "/var/lib/swarm56/triggers/force.now", "FORCE_RECLIP", actor)
 }
