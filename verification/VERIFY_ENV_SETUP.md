@@ -20,6 +20,7 @@ npm install
 npm run dev        # next dev = NODE_ENV=development → http 쿠키 동작(secure off)
 ```
 - 로그인: http://localhost:3000/admin/login  (비번 **verify1234**)
+- 주의(.env): Next는 `.env` 값의 `$`를 변수확장으로 처리하므로 **bcrypt 해시의 `$`는 `\$`로 이스케이프**돼 기록됨(`setup_verify.ps1`이 자동 처리, 런타임엔 원래 해시로 복원). 손으로 `.env`를 만들 땐 `ADMIN_PASSWORD_HASH=\$2b\$10\$...` 형태로.
 - 검증 포인트:
   - 로그인 성공/실패(틀린 비번), 비로그인 `/admin` 접근 차단(이중 가드)
   - 카드 **삭제(확인 모달)** → `/admin` **suppressed 목록**에 표시 → 홈피에서 사라짐

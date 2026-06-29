@@ -34,11 +34,14 @@ npx prisma migrate deploy
 Write-Host "[3/4] 테스트 admin 비번 해시 + 세션 시크릿 생성 (비번: verify1234)"
 $hash   = node -e "console.log(require('bcryptjs').hashSync('verify1234',10))"
 $secret = node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# Next(@next/env=dotenv-expand)가 .env 값의 $를 변수확장으로 처리 → bcrypt 해시($2b$10$...)가 깨짐.
+# $를 \$로 이스케이프해 기록하면 런타임엔 원래 해시로 복원됨.
+$hashEscaped = $hash.Replace('$', '\$')
 
 Write-Host "[4/4] personal-brand-hub\.env 작성"
 $lines = @(
   "DATABASE_URL=file:./dev.db",
-  "ADMIN_PASSWORD_HASH=$hash",
+  "ADMIN_PASSWORD_HASH=$hashEscaped",
   "SESSION_SECRET=$secret",
   "SWARM56_VAULT_DIR=$vault",
   "SWARM56_CLIP_TRIGGER=$root\.local-data\triggers\clip.now",
