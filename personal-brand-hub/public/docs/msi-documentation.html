@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSI System Documentation | Mainstreet Brief System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  @page { size: A4 portrait; margin: 20mm 18mm; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #1a1a2e;
+    background: #f8f9fc;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: #fff;
+    padding: 36px 40px 28px;
+  }
+  .header-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 12px; color: #cbd5e1; }
+  .meta-item span { color: #e2e8f0; font-weight: 600; }
+
+  /* Body */
+  .body { padding: 36px 40px; }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  /* Summary box */
+  .summary-box {
+    background: #f0f7ff;
+    border-left: 4px solid #2563eb;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #1e3a5f;
+    line-height: 1.8;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: #14532d;
+    line-height: 1.8;
+  }
+
+  /* Warning box */
+  .warning-box {
+    background: #fff7ed;
+    border-left: 4px solid #ea580c;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: #7c2d12;
+    line-height: 1.8;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* Code */
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* Dark code block */
+  .code-block {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 20px 24px;
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 8px;
+  }
+  .code-block .comment { color: #64748b; }
+  .code-block .key { color: #7dd3fc; }
+  .code-block .value { color: #86efac; }
+  .code-block .hl { color: #fbbf24; font-weight: 700; }
+  .code-block .arrow { color: #f472b6; }
+
+  /* Agent table rows */
+  .agent-name-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  /* Conviction badges */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .badge-strong { background: #15803d; color: #fff; }
+  .badge-buy    { background: #2563eb; color: #fff; }
+  .badge-watch  { background: #d97706; color: #fff; }
+  .badge-pass   { background: #dc2626; color: #fff; }
+  .badge-new    { background: #7c3aed; color: #fff; }
+  .badge-limit  { background: #64748b; color: #fff; }
+
+  /* Pipeline steps */
+  .pipeline { display: flex; flex-direction: column; }
+  .pipeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .pipeline-step:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #1e3a5f;
+    color: #fff;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+  .step-name {
+    font-size: 13px; font-weight: 700;
+    color: #0f172a;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 2px;
+  }
+  .step-detail { font-size: 12px; color: #64748b; }
+
+  /* Scoring grid */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .score-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .score-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .score-desc { font-size: 11.5px; color: #475569; line-height: 1.5; }
+
+  /* Conviction row */
+  .conviction-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 12.5px;
+  }
+  .conviction-row:last-child { border-bottom: none; }
+  .conviction-score { font-weight: 700; color: #0f172a; min-width: 14px; }
+  .conviction-label { color: #334155; }
+  .conviction-cond { color: #64748b; font-size: 11.5px; }
+
+  /* Signal chips */
+  .signal-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 12px;
+  }
+  .signal-row:last-child { border-bottom: none; }
+  .signal-chip {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 90px;
+    text-align: center;
+  }
+  .chip-new         { background: #ede9fe; color: #5b21b6; }
+  .chip-rerating    { background: #dcfce7; color: #15803d; }
+  .chip-momentum    { background: #dbeafe; color: #1d4ed8; }
+  .chip-stable      { background: #f1f5f9; color: #475569; }
+  .chip-deterioration { background: #fee2e2; color: #b91c1c; }
+
+  /* Vocabulary */
+  .vocab-block {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+  .vocab-term {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 4px;
+  }
+  .vocab-crit {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .vocab-desc { font-size: 12.5px; color: #334155; line-height: 1.7; }
+  .vocab-note { font-size: 11.5px; color: #94a3b8; margin-top: 6px; font-style: italic; }
+
+  /* Limit cards */
+  .limit-card {
+    border: 1px solid #fde68a;
+    background: #fffbeb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .limit-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 6px;
+  }
+  .limit-desc { font-size: 12px; color: #78350f; line-height: 1.6; }
+  .limit-status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #fef3c7;
+    color: #b45309;
+    margin-top: 6px;
+  }
+
+  /* Footer */
+  .footer {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  ul { padding-left: 18px; }
+  ul li { margin-bottom: 4px; font-size: 12.5px; color: #334155; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .page { box-shadow: none; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-label">Mainstreet Investment · System Documentation</div>
+    <h1>MSI System Documentation</h1>
+    <div class="header-sub">메인스트리트 투자 인텔리전스 브리프 시스템 구조 · 에이전트 · 운영 원칙</div>
+    <div class="header-meta">
+      <div class="meta-item">작성 기준 <span>2026-05-12</span></div>
+      <div class="meta-item">프로젝트 <span>ms-newsletter</span></div>
+      <div class="meta-item">파이프라인 <span>8단계</span></div>
+      <div class="meta-item">대상 <span>시스템 담당자 / 신규 참여자</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- 1. MSI 개요 -->
+    <div class="section">
+      <div class="section-title">1. MSI 개요</div>
+      <div class="summary-box">
+        MSI(Mainstreet Investment Intelligence Brief)는 메인스트리트인베스트먼트 및 메인스트리트벤처스 투자담당임원을 위한 <strong>주간 투자 인텔리전스 브리프 시스템</strong>이다.
+      </div>
+      <table>
+        <thead>
+          <tr><th>구분</th><th>내용</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;white-space:nowrap;">하는 일</td>
+            <td>
+              매주 월요일 기준 국내외 투자 유망 기업 5~7개를 조사하고 분석<br>
+              재무, 리스크, 포트폴리오 적합성을 평가해 IC 메모로 합성<br>
+              A4 한국어 HTML 문서로 출력 (이메일 발송 가능)<br>
+              분석 결과를 기업별 마크다운 파일과 회의록으로 아카이빙
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;white-space:nowrap;">투자 포커스</td>
+            <td>
+              Series A 이상 성장단계 (Seed, Pre-seed 제외)<br>
+              M&A, Secondary, Pre-IPO<br>
+              Deeptech/AI · K-content/IP · 브랜드 글로벌라이제이션 · Agtech/Foodtech · 디지털 헬스케어/시니어케어 · RWA/Fintech
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. 왜 이 구조인가 -->
+    <div class="section">
+      <div class="section-title">2. 왜 이 구조가 필요한가</div>
+      <div class="summary-box">
+        단일 AI 에이전트로 전체 브리프를 생성하면 분석의 편향과 검증 부재가 문제가 된다. MSI는 역할이 분리된 <strong>8개 에이전트를 순서대로 실행</strong>함으로써 각 분석 단계를 독립적으로 수행하고 다음 에이전트에 전달하는 파이프라인 구조를 택했다.
+      </div>
+      <div class="info-box">
+        매주 실행 결과를 파일 시스템에 누적하여 시간이 지날수록 판단 품질이 개선되는 구조를 목표로 한다.<br>
+        (<code>watchlist.md</code>, <code>scoring_history.csv</code>, <code>rejected.md</code> 참조)
+      </div>
+    </div>
+
+    <!-- 3. Artifact Dependency Map -->
+    <div class="section">
+      <div class="section-title">3. Artifact Dependency Map</div>
+      <div class="code-block"><span class="comment">데이터 레이어 (루트 파일)</span>
+thesis.md / watchlist.md / rejected.md / portfolio.csv
+scoring_history.csv / sector_map.yaml / peer_map.json / dd_questions.md
+        │
+        ▼
+      <span class="hl">msi2</span>  ─────────────── 기업 5~7개 선별, Why Now, 산업 트렌드
+        │
+        ├──────────────┐
+        ▼              ▼
+    <span class="hl">finance2</span>        <span class="hl">risk2</span>  ─── 각각 독립 분석, dd_questions.md 참조
+        │              │
+        └──────┬───────┘
+               │
+               ▼
+          <span class="hl">portfolio2</span>  ──────── portfolio.csv, sector_map.yaml 참조
+               │
+               ▼
+            <span class="hl">memo2</span>  ──────────── IC 스코어카드 합성, 최종 판정
+               │                scoring_history.csv append
+               │                rejected.md append (Pass 기업)
+               │
+       ┌───────┼───────┐
+       ▼       ▼       ▼
+    <span class="hl">html2</span>     <span class="hl">md2</span>    <span class="hl">log2</span>
+       │       │       │
+       ▼       ▼       ▼
+brief.html  brief.md  meeting-log.md
+            companies/
+            YYYY-MM-DD-{slug}.md</div>
+    </div>
+
+    <!-- 3-1. 현재 Workflow -->
+    <div class="section">
+      <div class="section-title">3-1. 현재 Workflow</div>
+      <div class="summary-box">
+        트리거: <code>/brief</code> 슬래시 커맨드 (Claude Code 세션에서 수동 실행)
+      </div>
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-name">msi2</div>
+            <div class="step-detail">기업 발굴 및 산업 트렌드 조사 — 데이터 레이어 8개 파일 참조</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-name">finance2</div>
+            <div class="step-detail">재무 심층 분석</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-name">risk2</div>
+            <div class="step-detail">리스크 평가</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-name">portfolio2</div>
+            <div class="step-detail">포트폴리오 적합성 평가</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-name">memo2</div>
+            <div class="step-detail">IC 메모 합성 및 최종 판정</div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <div class="step-name">html2</div>
+            <div class="step-detail">A4 한국어 HTML 문서 생성 → <code>output/YYYY-MM-DD-brief.html</code></div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <div class="step-name">md2</div>
+            <div class="step-detail">기업별 마크다운 파일 생성 → <code>output/companies/YYYY-MM-DD-{slug}.md</code></div>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <div class="step-name">log2</div>
+            <div class="step-detail">IC 에이전트 회의록 작성 → <code>output/YYYY-MM-DD-meeting-log.md</code></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:#64748b;">
+        각 에이전트는 이전 에이전트의 출력을 입력으로 사용한다. 에이전트 간 데이터 전달은 대화 컨텍스트(in-memory) 기반이며 중간 파일 저장은 없다.
+      </div>
+    </div>
+
+    <!-- 4. 에이전트 역할 -->
+    <div class="section">
+      <div class="section-title">4. 에이전트 역할</div>
+      <div style="font-size:11.5px;color:#64748b;margin-bottom:12px;">에이전트 파일 위치: <code>.claude/agents/msi-v2/</code></div>
+      <table>
+        <thead>
+          <tr><th>에이전트</th><th>역할</th><th>도구</th><th>주요 입력</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="agent-name-cell">msi2</td>
+            <td>기업 발굴 및 산업 트렌드 조사</td>
+            <td>WebSearch, WebFetch, Read, Write</td>
+            <td>데이터 레이어 8개 파일</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">finance2</td>
+            <td>재무 심층 분석</td>
+            <td>WebSearch, WebFetch, Read</td>
+            <td>msi2 출력, peer_map.json, dd_questions.md</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">risk2</td>
+            <td>리스크 평가</td>
+            <td>WebSearch, WebFetch, Read</td>
+            <td>msi2·finance2 출력, dd_questions.md</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">portfolio2</td>
+            <td>포트폴리오 적합성 평가</td>
+            <td>Read, Write</td>
+            <td>thesis.md, sector_map.yaml, portfolio.csv, watchlist.md</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">memo2</td>
+            <td>IC 메모 합성 및 최종 판정</td>
+            <td>WebSearch, WebFetch, Read, Write</td>
+            <td>전 에이전트 출력, thesis.md</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">html2</td>
+            <td>HTML 문서 생성</td>
+            <td>Read, Write</td>
+            <td>memo2·finance2·risk2·portfolio2 출력, templates/</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">md2</td>
+            <td>기업별 마크다운 및 브리프 MD 생성</td>
+            <td>Read, Write</td>
+            <td>전 에이전트 출력</td>
+          </tr>
+          <tr>
+            <td class="agent-name-cell">log2</td>
+            <td>IC 회의록 작성</td>
+            <td>Read, Write</td>
+            <td>msi2~memo2 출력</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. Artifact 구조 -->
+    <div class="section">
+      <div class="section-title">5. Artifact 구조</div>
+      <div class="code-block">output/
+  <span class="hl">YYYY-MM-DD-brief.html</span>         <span class="comment">← html2 생성. 이메일 발송용. A4 인쇄 최적화.</span>
+  <span class="hl">YYYY-MM-DD-brief.md</span>           <span class="comment">← md2 생성. 주간 브리프 전체 텍스트 아카이브.</span>
+  <span class="hl">YYYY-MM-DD-meeting-log.md</span>     <span class="comment">← log2 생성. 에이전트별 판단·미결항목 기록.</span>
+  companies/
+    <span class="value">YYYY-MM-DD-{slug}.md</span>        <span class="comment">← md2 생성. 기업 1개당 파일 1개.</span>
+  documentation/
+    claude.md                   <span class="comment">← 문서화 작업 정책</span>
+    documentation.md            <span class="comment">← 이 파일</span>
+  work-log/
+    <span class="value">YYYY-MM-DD-work-log.md</span>      <span class="comment">← 시스템 구축 및 변경 작업 로그</span></div>
+
+      <table style="margin-top:16px;">
+        <thead>
+          <tr><th>Artifact</th><th>방지하는 것</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>brief.html</code></td>
+            <td>분석 결과가 대화 컨텍스트에만 존재하다 소실되는 것</td>
+          </tr>
+          <tr>
+            <td><code>brief.md</code></td>
+            <td>HTML만 있고 텍스트 기반 검색·참조가 불가한 상태</td>
+          </tr>
+          <tr>
+            <td><code>companies/*.md</code></td>
+            <td>기업별 판단 근거가 주간 브리프에 묻혀 재사용 불가한 상태</td>
+          </tr>
+          <tr>
+            <td><code>meeting-log.md</code></td>
+            <td>에이전트별 미결 항목이 다음 주로 연속되지 못하고 단절되는 것</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:16px;font-size:12px;color:#64748b;">
+        <strong style="color:#334155;">현재 생성된 아카이브 (2026-05-12 기준)</strong><br>
+        브리프: 2026-05-06, 2026-05-07, 2026-05-11 (HTML) &nbsp;·&nbsp; 브리프 MD: 2026-05-11 &nbsp;·&nbsp; 회의록: 2026-05-11<br>
+        기업 파일 (2026-05-11): 구다이글로벌 · 업스테이지 · 뤼튼테크놀로지스 · 케어닥 · 퓨리오사AI · 크레수스 · 뉴빌리티
+      </div>
+    </div>
+
+    <!-- 6. 데이터 레이어 -->
+    <div class="section">
+      <div class="section-title">6. 데이터 레이어 (루트 파일)</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">msi2가 매회 브리프 시작 시 순서대로 읽는 파일들. 각 파일은 특정 유형의 판단 실수 또는 기억 손실을 방지하기 위해 존재한다.</div>
+      <table>
+        <thead>
+          <tr><th>파일</th><th>방지하는 것</th><th>내용</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>thesis.md</code></td>
+            <td>기준 없는 판단</td>
+            <td>투자 철학 전문. "투자하지 않는 기업" 기준 포함. 모든 추천의 최우선 검증 기준.</td>
+          </tr>
+          <tr>
+            <td><code>watchlist.md</code></td>
+            <td>후보 기업 맥락 소실</td>
+            <td>장기 추적 후보 목록. status, next_trigger, concerns 포함.</td>
+          </tr>
+          <tr>
+            <td><code>rejected.md</code></td>
+            <td>동일 실패 반복</td>
+            <td>패스 기업 전체 기록. reconsideration_trigger 미달성 시 재추천 차단.</td>
+          </tr>
+          <tr>
+            <td><code>portfolio.csv</code></td>
+            <td>섹터 중복 투자 / 유동성 충돌</td>
+            <td>현재 투자 포지션 전체. 섹터 쏠림·follow_on 여부·엑싯 타이밍 충돌 방지.</td>
+          </tr>
+          <tr>
+            <td><code>scoring_history.csv</code></td>
+            <td>rerating 신호 누락</td>
+            <td>기업별 IC 점수 이력. 주차별 score_delta로 RERATING·DETERIORATION 추적.</td>
+          </tr>
+          <tr>
+            <td><code>sector_map.yaml</code></td>
+            <td>exposure_cap 초과</td>
+            <td>섹터 taxonomy 및 섹터별 투자 한도. portfolio2가 cap 초과 여부 계산에 사용.</td>
+          </tr>
+          <tr>
+            <td><code>peer_map.json</code></td>
+            <td>밸류에이션 기준 없는 판단</td>
+            <td>국내(KOSPI/KOSDAQ) + 글로벌(NASDAQ/NYSE) peer 배수 기준.</td>
+          </tr>
+          <tr>
+            <td><code>dd_questions.md</code></td>
+            <td>섹터별 핵심 질문 누락</td>
+            <td>섹터별 DD 체크리스트. finance2·risk2가 공개 정보로 답변 가능 여부를 확인.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 7. Scoring 구조 -->
+    <div class="section">
+      <div class="section-title">7. Scoring 구조</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">IC Scorecard: 기업별 6개 항목 각 1~5점, 총 30점 만점</div>
+      <div class="score-grid">
+        <div class="score-card">
+          <div class="score-label">Market Opportunity</div>
+          <div class="score-desc">TAM 크기, 성장성, 시장 지배력 가능성</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Growth</div>
+          <div class="score-desc">매출 성장률, 고객 증가세, 시장 침투율</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Capital Efficiency</div>
+          <div class="score-desc">번 멀티플, ARR per $ Raised, 그로스 마진</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Exit Visibility</div>
+          <div class="score-desc">M&A 가능성, IPO readiness, Secondary 유동성</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Strategic Fit</div>
+          <div class="score-desc">메인스트리트 포트폴리오 시너지, 섹터 전략 부합도</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Risk-Reward Ratio</div>
+          <div class="score-desc">리스크 대비 기대 수익, 밸류에이션 적정성</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:1px;color:#64748b;text-transform:uppercase;">Conviction 기준</div>
+      <div class="conviction-row"><div class="conviction-score">5</div><div><span class="badge badge-strong">Strong Buy</span></div><div class="conviction-cond">총점 ≥ 24</div></div>
+      <div class="conviction-row"><div class="conviction-score">4</div><div><span class="badge badge-buy">Buy</span></div><div class="conviction-cond">총점 18~23</div></div>
+      <div class="conviction-row"><div class="conviction-score">3</div><div><span class="badge badge-watch">Watch</span></div><div class="conviction-cond">총점 12~17</div></div>
+      <div class="conviction-row"><div class="conviction-score">1~2</div><div><span class="badge badge-pass">Pass</span></div><div class="conviction-cond">총점 ≤ 11 또는 Fatal Risk 존재</div></div>
+
+      <div style="margin-top:20px;margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:1px;color:#64748b;text-transform:uppercase;">Signal 판정 (scoring_history.csv 기반)</div>
+      <div class="signal-row"><span class="signal-chip chip-new">NEW</span><span>처음 등장</span></div>
+      <div class="signal-row"><span class="signal-chip chip-rerating">RERATING</span><span>score_delta ≥ +3</span></div>
+      <div class="signal-row"><span class="signal-chip chip-momentum">MOMENTUM</span><span>score_delta +1 또는 +2</span></div>
+      <div class="signal-row"><span class="signal-chip chip-stable">STABLE</span><span>score_delta 0</span></div>
+      <div class="signal-row"><span class="signal-chip chip-deterioration">DETERIORATION</span><span>score_delta ≤ −1</span></div>
+
+      <div style="margin-top:16px;font-size:12px;color:#64748b;">
+        <strong style="color:#334155;">필터:</strong> Series A 미만 자동 제외 (msi2 단계) &nbsp;·&nbsp;
+        Fatal Risk(HIGH) 존재 시 Pass 강제 (risk2 → memo2) &nbsp;·&nbsp;
+        thesis.md "투자하지 않는 기업" 해당 시 Pass (memo2 단계)
+      </div>
+    </div>
+
+    <!-- 8. Memory 및 Provenance 규칙 -->
+    <div class="section">
+      <div class="section-title">8. Memory 및 Provenance 규칙</div>
+      <div class="warning-box">
+        <strong>절대 금지:</strong><br>
+        에이전트가 실행되지 않았는데 출력이 있는 것처럼 기록<br>
+        에이전트 간 deliberation, 의견 충돌, conviction shift를 사후 합성<br>
+        미결 항목을 해결된 것처럼 표기
+      </div>
+
+      <div style="margin-bottom:12px;font-size:12px;color:#334155;"><strong>에이전트 실패 시 기록 방식:</strong></div>
+      <div class="code-block"><span class="comment">[Agent Timeout]</span>
+<span class="comment">[No Output Generated]</span>
+<span class="comment">[Execution Failed]</span>
+<span class="comment">[Incomplete Analysis]</span></div>
+
+      <div class="info-box" style="margin-top:14px;">
+        <strong>log2 authenticity_note 필드:</strong> "This log summarizes generated outputs. It does not invent agent deliberation." — 매 회의록 frontmatter에 명시.<br><br>
+        시스템의 목적은 폴리시된 산출물이 아니라 <strong>신뢰할 수 있는 시간적 의사결정 기록</strong>이다. Memory integrity is more important than presentation completeness.
+      </div>
+    </div>
+
+    <!-- 9. Temporal Vocabulary -->
+    <div class="section">
+      <div class="section-title">9. Temporal Vocabulary</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:14px;">MSI 시스템 전반에서 사용되는 용어의 정확한 의미. 유사해 보이는 개념 간 구분이 중요하다.</div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">RERATING</div>
+        <div class="vocab-crit">기준: <code>score_delta ≥ +3</code></div>
+        <div class="vocab-desc">기존 판단의 구조적 변화. 기업 펀더멘털, 엑싯 가시성, 시장 포지션 등에서 실질적 변화가 있었음을 나타냄.</div>
+        <div class="vocab-note">MOMENTUM과 구분: 단순 수치 개선이 아니라 판단 프레임 자체가 바뀐 경우.</div>
+      </div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">MOMENTUM</div>
+        <div class="vocab-crit">기준: <code>score_delta +1 또는 +2</code></div>
+        <div class="vocab-desc">긍정적 방향의 단기 시그널. 구조 변화까지는 아님. Key Signals에 반영하되 Strong Buy 상향의 근거로는 단독 사용 불가.</div>
+      </div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">STABLE</div>
+        <div class="vocab-crit">기준: <code>score_delta 0</code></div>
+        <div class="vocab-desc">conviction 유지 상태. 변화 없음이 아니라 변화가 판단에 영향을 주지 않는 수준임을 의미.</div>
+        <div class="vocab-note">주의: STABLE이어도 Open Question이 미해결 상태일 수 있음. meeting-log의 Unresolved Items 확인 필요.</div>
+      </div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">DETERIORATION</div>
+        <div class="vocab-crit">기준: <code>score_delta ≤ −1</code></div>
+        <div class="vocab-desc">기존 판단 대비 악화. 해당 기업의 Conviction Shift 섹션에 명시 필수.</div>
+      </div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">Carry-over</div>
+        <div class="vocab-desc">해결되지 않은 Open Question이 다음 브리프 사이클로 넘어가는 상태. 기록 위치: <code>meeting-log.md</code>의 Unresolved Items 섹션.</div>
+        <div class="vocab-note">목적: 질문이 대화 컨텍스트 소실과 함께 사라지지 않도록 파일에 명시적으로 보존.</div>
+      </div>
+
+      <div class="vocab-block">
+        <div class="vocab-term">Rejection Memory</div>
+        <div class="vocab-desc">Pass 판정 이후 동일 기업이 재추천되는 것을 방지하고, 재검토 조건을 추적하는 구조.</div>
+        <div style="margin-top:10px;">
+          <table>
+            <thead><tr><th>단계</th><th>동작</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>memo2가 Pass 판정 시 <code>rejected.md</code>에 기업 정보 append</td></tr>
+              <tr><td>2</td><td><code>reconsideration_trigger</code> 필드에 재검토 조건 명시</td></tr>
+              <tr><td>3</td><td>msi2가 신규 발굴 시 rejected.md 먼저 확인 → trigger 달성 여부 판단</td></tr>
+              <tr><td>4</td><td>미달성 시: 해당 회차 브리프에서 조용히 제외 (재추천 없음)</td></tr>
+              <tr><td>5</td><td>달성 시: Key Signals에 "재검토 트리거 달성" 명시 후 재평가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. 현재 한계 및 실험 중인 부분 -->
+    <div class="section">
+      <div class="section-title">10. 현재 한계 및 실험 중인 부분</div>
+
+      <div class="limit-card">
+        <div class="limit-title">에이전트 간 데이터 전달</div>
+        <div class="limit-desc">현재 대화 컨텍스트(in-memory) 기반. 에이전트 중단 또는 타임아웃 시 이전 출력이 유실될 수 있음. 중간 파일 저장 방식은 미도입 상태.</div>
+        <div class="limit-status">미구현</div>
+      </div>
+
+      <div class="limit-card">
+        <div class="limit-title">파이프라인 자동화</div>
+        <div class="limit-desc"><code>/brief</code> 커맨드는 수동 실행. 매주 월요일 자동 실행은 미구현. 이메일 발송(<code>send_email.py</code>)은 별도 수동 실행.</div>
+        <div class="limit-status">미구현</div>
+      </div>
+
+      <div class="limit-card">
+        <div class="limit-title">templates/</div>
+        <div class="limit-desc"><code>templates/v2/brief-template.html</code> 참조. 실제 템플릿 구조는 별도 확인 필요.</div>
+        <div class="limit-status">확인 필요</div>
+      </div>
+
+      <div class="limit-card">
+        <div class="limit-title">related_entities</div>
+        <div class="limit-desc">log2 frontmatter에 기록. 단순 피어·참고 기업은 제외하고 판단에 실제 영향을 준 관계만 기록하도록 지침이 있으나, 실제 적용 일관성은 미검증.</div>
+        <div class="limit-status">미검증</div>
+      </div>
+
+      <div class="limit-card">
+        <div class="limit-title">Obsidian 연동</div>
+        <div class="limit-desc">기업별 MD 파일은 Obsidian cross-link를 염두에 두고 설계됐으나 실제 vault 구성 및 연동은 미완.</div>
+        <div class="limit-status">미완</div>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>Mainstreet Investment Intelligence System</div>
+    <div>2026-05-12 &nbsp;·&nbsp; ms-newsletter &nbsp;·&nbsp; output/documentation/documentation.html</div>
+  </div>
+
+</div>
+</body>
+</html>

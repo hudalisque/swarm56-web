@@ -23,11 +23,11 @@ const projects: Project[] = [
     url: '/docs/small-vill-meta-research.html',
   },
   {
-    name: 'Auto Report',
+    name: 'MSI 시스템 문서',
     description:
-      '매월 반복되는 정산·운영 리포트를 자동으로 생성하고 메일로 발송하는 도구. 소규모 팀의 반복 업무를 줄이기 위해 만들었습니다.',
-    tags: ['Workflow Automation', 'Node.js', 'OSS'],
-    url: 'https://github.com/swarm56/auto-report',
+      '메인스트리트 투자 인텔리전스 브리프(MSI) — 8단계 멀티에이전트 파이프라인의 구조·에이전트 역할·운영 규칙을 정리한 시스템 문서.',
+    tags: ['Multi-Agent', 'Pipeline', 'Docs'],
+    url: '/docs/msi-documentation.html',
   },
 ]
 
