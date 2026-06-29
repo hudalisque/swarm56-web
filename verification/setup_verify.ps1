@@ -25,7 +25,13 @@ $env:DATABASE_URL = "file:./dev.db"
 Remove-Item -Force ".\prisma\dev.db", ".\prisma\dev.db-wal", ".\prisma\dev.db-shm" -ErrorAction SilentlyContinue
 npx prisma generate | Out-Null
 npx prisma migrate deploy
+$migrateExit = $LASTEXITCODE
 Pop-Location
+# migrate 실패(P3005/Schema engine error 등)는 네이티브 명령이라 $ErrorActionPreference로 안 잡힘 → 명시 검사 후 중단
+if ($migrateExit -ne 0) {
+  Write-Error "[ABORT] prisma migrate deploy 실패 (exit $migrateExit). setup 중단 — 성공으로 위장하지 않음."
+  exit $migrateExit
+}
 
 Write-Host "[2/4] 클리퍼 실행 → 볼트 + dev.db 데이터 (마이그레이션된 스키마에 파생)"
 $env:PYTHONIOENCODING = "utf-8"
