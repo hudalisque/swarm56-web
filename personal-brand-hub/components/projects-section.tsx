@@ -9,11 +9,18 @@ interface Project {
 
 const projects: Project[] = [
   {
-    name: 'swarm56 (이 사이트)',
+    name: 'swarm56 · 프로젝트 개요',
     description:
       '이 사이트 자체가 프로젝트입니다. 이종 멀티에이전트(설계·디자인·구현·검증)가 협업해 만든 퍼스널 허브 — 워크플로우·아키텍처를 정리한 프로젝트 개요 문서.',
     tags: ['Multi-Agent', 'Next.js', 'Case Study'],
     url: '/docs/project-overview.html',
+  },
+  {
+    name: 'Small Vill 메타연구',
+    description:
+      '"Small Vill" 개발을 위한 멀티에이전트 메타연구 보고서. 연구 방향과 분석을 정리한 문서입니다.',
+    tags: ['Multi-Agent', 'Meta Research', 'Report'],
+    url: '/docs/small-vill-meta-research.html',
   },
   {
     name: 'Auto Report',
@@ -21,20 +28,6 @@ const projects: Project[] = [
       '매월 반복되는 정산·운영 리포트를 자동으로 생성하고 메일로 발송하는 도구. 소규모 팀의 반복 업무를 줄이기 위해 만들었습니다.',
     tags: ['Workflow Automation', 'Node.js', 'OSS'],
     url: 'https://github.com/swarm56/auto-report',
-  },
-  {
-    name: 'BI Starter',
-    description:
-      '가볍게 시작하는 미니 BI 대시보드 템플릿. 핵심 지표를 한 화면에 모아 데이터 기반 의사결정을 돕습니다.',
-    tags: ['Business Intelligence', 'Next.js', 'Template'],
-    url: 'https://github.com/swarm56/bi-starter',
-  },
-  {
-    name: 'AI Workflows',
-    description:
-      '업무에 바로 적용하는 AI 프롬프트와 파이프라인 모음. 글쓰기, 자료 정리, 분석 자동화를 실험하며 정리했습니다.',
-    tags: ['AI', 'Automation', 'Notes'],
-    url: 'https://github.com/swarm56/ai-workflows',
   },
 ]
 
