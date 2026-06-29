@@ -1,0 +1,11 @@
+[Unit]
+Description=Swarm56 "강제 갱신"(#10) 트리거 감시 (force.now)
+After=network.target
+
+[Path]
+# 백오피스(admin-repo.ts:triggerForceReclip)가 이 파일을 기록 → 아래 service 실행
+PathChanged=/var/lib/swarm56/triggers/force.now
+Unit=swarm56-force.service
+
+[Install]
+WantedBy=multi-user.target

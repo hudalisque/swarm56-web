@@ -12,8 +12,10 @@ from .vault import write_md, existing_hash, iter_vault
 
 # 강제 갱신(#10): dedup(볼트 md 존재) 스킵을 무시하고 재수집·덮어쓰기 → 원본 수정 반영
 FORCE = os.environ.get("SWARM56_FORCE") == "1"
-from .collectors import naver_blog, github, youtube, notion, swarm, instagram, facebook
+from .collectors import naver_blog, github, youtube, notion, swarm, instagram
 
+# v5 채널 계약: 6개 자동 수집. LinkedIn·Facebook은 자동 수집 불가 → 빈 채널(UI 플레이스홀더만).
+# (facebook collector는 시도 기록용으로 보존하되 자동 루프엔 넣지 않음 — CHANNEL_INTEGRATION_NOTES 참조)
 CHANNELS = [
     ("NAVER_BLOG", naver_blog.fetch),
     ("GITHUB", github.fetch),
@@ -21,7 +23,6 @@ CHANNELS = [
     ("NOTION", notion.fetch),
     ("SWARM", swarm.fetch),
     ("INSTAGRAM", instagram.fetch),
-    ("FACEBOOK", facebook.fetch),
 ]
 
 

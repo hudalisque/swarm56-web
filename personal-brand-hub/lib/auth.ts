@@ -6,7 +6,14 @@ const COOKIE = "swarm56_admin"
 const MAX_AGE = 60 * 60 * 12 // 12h
 
 function secret(): string {
-  return process.env.SESSION_SECRET || "dev-insecure-change-me"
+  const s = process.env.SESSION_SECRET
+  if (s) return s
+  // fail-closed: 프로덕션에선 SESSION_SECRET 없으면 즉시 차단(알려진 서명키 fallback 금지)
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET 환경변수가 필요합니다 (프로덕션 fail-closed)")
+  }
+  // 개발 전용 — 프로덕션 경로에선 위에서 throw됨
+  return "dev-only-not-for-production"
 }
 function sign(payload: string): string {
   return crypto.createHmac("sha256", secret()).update(payload).digest("hex")

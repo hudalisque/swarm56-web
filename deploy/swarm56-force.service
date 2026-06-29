@@ -1,0 +1,17 @@
+[Unit]
+Description=Swarm56 강제 재클립 에이전트 1회 실행 (백오피스 "강제 갱신" 트리거, dedup 무시)
+After=network.target
+
+[Service]
+Type=oneshot
+User=swarm56-web
+Group=swarm56-web
+WorkingDirectory=/opt/swarm56/agent/current
+EnvironmentFile=/etc/swarm56/agent.env
+# SWARM56_FORCE=1 → 볼트 md 존재(dedup) 스킵을 무시하고 재수집·덮어쓰기(원본 수정 반영)
+Environment=SWARM56_FORCE=1
+ExecStart=/opt/swarm56/agent/current/.venv/bin/python -m agent.main
+ExecStartPost=/bin/rm -f /var/lib/swarm56/triggers/force.now
+TimeoutStartSec=900
+NoNewPrivileges=true
+PrivateTmp=true

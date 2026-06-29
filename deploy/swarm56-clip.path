@@ -1,0 +1,11 @@
+[Unit]
+Description=Swarm56 "지금 클리핑" 트리거 감시 (clip.now)
+After=network.target
+
+[Path]
+# 백오피스(admin-repo.ts:triggerClip)가 이 파일을 기록 → 아래 service 실행
+PathChanged=/var/lib/swarm56/triggers/clip.now
+Unit=swarm56-clip.service
+
+[Install]
+WantedBy=multi-user.target

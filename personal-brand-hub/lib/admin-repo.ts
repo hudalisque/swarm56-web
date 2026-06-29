@@ -22,7 +22,7 @@ export async function audit(action: string, target: string | null, actor: string
   await prisma.adminAudit.create({ data: { action, target, actor, detail: detail ?? null } })
 }
 
-/** 삭제 = FeedCard 행 제거 + 활성 SuppressionRecord 기록 (방식 B). 원자적. */
+/** 삭제 = FeedCard 행 제거 + 활성 SuppressionRecord 기록 + 감사로그 (방식 B). 셋 다 한 트랜잭션(원자적). */
 export async function deleteCard(originalUrl: string, actor: string, reason?: string) {
   const card = await prisma.feedCard.findUnique({ where: { originalUrl } })
   await prisma.$transaction([
@@ -32,8 +32,8 @@ export async function deleteCard(originalUrl: string, actor: string, reason?: st
       update: { restoredAt: null, deletedAt: new Date(), deletedBy: actor, reason: reason ?? null, vaultPath: card?.vaultPath ?? null },
       create: { originalUrl, vaultPath: card?.vaultPath ?? null, deletedBy: actor, reason: reason ?? null },
     }),
+    prisma.adminAudit.create({ data: { action: "DELETE", target: originalUrl, actor, detail: reason ?? null } }),
   ])
-  await audit("DELETE", originalUrl, actor, reason)
 }
 
 /** 복원 = tombstone 해제 + 볼트 md에서 카드 재삽입 (하나의 원자적 작업). */
@@ -57,35 +57,42 @@ export async function restoreCard(originalUrl: string, actor: string) {
     }
     ops.push(prisma.feedCard.upsert({ where: { originalUrl }, update: data, create: data }))
   }
+  // 감사로그도 같은 트랜잭션에 포함 → 복원과 audit 원자성 보장
+  ops.push(prisma.adminAudit.create({ data: { action: "RESTORE", target: originalUrl, actor, detail: null } }))
   await prisma.$transaction(ops)
-  await audit("RESTORE", originalUrl, actor)
 }
 
 export async function editCard(originalUrl: string, title: string, excerpt: string, actor: string) {
-  await prisma.feedCard.update({ where: { originalUrl }, data: { title, excerpt: excerpt || null } })
-  await audit("EDIT", originalUrl, actor)
+  await prisma.$transaction([
+    prisma.feedCard.update({ where: { originalUrl }, data: { title, excerpt: excerpt || null } }),
+    prisma.adminAudit.create({ data: { action: "EDIT", target: originalUrl, actor, detail: null } }),
+  ])
 }
 
-/** "지금 클리핑" — 트리거 파일만 기록(web→python 직접 spawn 금지). systemd path-unit이 감지해 실행. */
+/** "지금 클리핑" — 트리거 파일만 기록(web→python 직접 spawn 금지). systemd path-unit이 감지해 실행.
+ *  쓰기 실패 시 성공으로 위장하지 않음: 실패 audit + 에러 전파(UI에 실패 노출). */
 export async function triggerClip(actor: string) {
   const f = process.env.SWARM56_CLIP_TRIGGER || "/var/lib/swarm56/triggers/clip.now"
   try {
     fs.mkdirSync(path.dirname(f), { recursive: true })
     fs.writeFileSync(f, String(Date.now()))
-  } catch {
-    /* 트리거 디렉토리 없으면 무시(로컬) */
+  } catch (e) {
+    await audit("CLIP_NOW_FAILED", null, actor, String(e))
+    throw new Error(`클리핑 트리거 기록 실패: ${e}`)
   }
   await audit("CLIP_NOW", null, actor)
 }
 
-/** "강제 갱신"(#10) — force 트리거 파일 기록. systemd path-unit이 SWARM56_FORCE=1로 에이전트 실행. */
+/** "강제 갱신"(#10) — force 트리거 파일 기록. systemd path-unit이 SWARM56_FORCE=1로 에이전트 실행.
+ *  쓰기 실패 시 실패 audit + 에러 전파. */
 export async function triggerForceReclip(actor: string) {
   const f = process.env.SWARM56_FORCE_TRIGGER || "/var/lib/swarm56/triggers/force.now"
   try {
     fs.mkdirSync(path.dirname(f), { recursive: true })
     fs.writeFileSync(f, String(Date.now()))
-  } catch {
-    /* 로컬 등 디렉토리 없으면 무시 */
+  } catch (e) {
+    await audit("FORCE_RECLIP_FAILED", null, actor, String(e))
+    throw new Error(`강제 갱신 트리거 기록 실패: ${e}`)
   }
   await audit("FORCE_RECLIP", null, actor)
 }
