@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swarm56 프로젝트 개요 | Project Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  @page { size: A4 portrait; margin: 20mm 18mm; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', -apple-system, sans-serif; font-size: 13px; line-height: 1.7; color: #1a1a2e; background: #f8f9fc; padding: 40px 20px; }
+  .page { max-width: 820px; margin: 0 auto 28px; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+  .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: #fff; padding: 36px 40px 28px; }
+  .header-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header-sub { font-size: 13px; color: #94a3b8; }
+  .header-meta { display: flex; gap: 24px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; }
+  .meta-item { font-size: 12px; color: #cbd5e1; }
+  .meta-item span { color: #e2e8f0; font-weight: 600; }
+  .body { padding: 36px 40px; }
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #64748b; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+  .section-title.core { color: #2563eb; border-bottom-color: #2563eb; }
+  .section h3 { font-size: 14px; font-weight: 700; color: #0f172a; margin: 18px 0 8px; }
+  .section p { margin-bottom: 10px; }
+  .section ul { margin: 0 0 12px 18px; }
+  .section li { margin-bottom: 4px; }
+  .summary-box { background: #f0f7ff; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 13px; color: #1e3a5f; line-height: 1.8; }
+  .info-box { background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0; padding: 14px 20px; margin-bottom: 16px; font-size: 12.5px; color: #14532d; line-height: 1.8; }
+  .warning-box { background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 8px 8px 0; padding: 14px 20px; margin-bottom: 16px; font-size: 12.5px; color: #7c2d12; line-height: 1.8; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 12px; }
+  th { background: #f8fafc; color: #475569; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #e2e8f0; font-size: 11px; letter-spacing: 0.5px; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; line-height: 1.6; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: 'Courier New', monospace; font-size: 11px; background: #f1f5f9; color: #475569; padding: 1px 5px; border-radius: 3px; }
+  .code-block { background: #0f172a; border-radius: 8px; padding: 20px 24px; color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8; overflow-x: auto; white-space: pre; margin-bottom: 12px; }
+  .code-block .comment { color: #64748b; } .code-block .key { color: #7dd3fc; } .code-block .hl { color: #fbbf24; font-weight: 700; } .code-block .arrow { color: #f472b6; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; }
+  .badge-strong { background: #15803d; color: #fff; } .badge-new { background: #7c3aed; color: #fff; } .badge-limit { background: #64748b; color: #fff; } .badge-design { background: #db2777; color: #fff; }
+  .pipeline { display: flex; flex-direction: column; }
+  .pipeline-step { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+  .pipeline-step:last-child { border-bottom: none; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: #1e3a5f; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-num.design { background: #db2777; } .step-num.gap { background: #b91c1c; }
+  .step-body { flex: 1; }
+  .step-name { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+  .step-detail { font-size: 12px; color: #64748b; }
+  .agent-cell { font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; color: #0f172a; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-label">Project Overview</div>
+    <h1>swarm56 — 프로젝트 개요</h1>
+    <div class="header-sub">핵심: 이종 멀티에이전트(hetero-multi-agent) 협업 워크플로우 — swarm56.com은 그 산출물</div>
+    <div class="header-meta">
+      <div class="meta-item">버전 <span>v5 (라이브)</span></div>
+      <div class="meta-item">기준일 <span>2026-06-29</span></div>
+      <div class="meta-item">라이브 <span>swarm56.com</span></div>
+      <div class="meta-item">브랜치 <span>fix/r1-obsidian-single-source</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="section">
+      <div class="section-title">1 · 프로젝트 개요</div>
+      <div class="summary-box">
+        swarm56은 두 층위다 — <strong>① 산출물</strong>: 퍼스널 브랜드 허브 <code>swarm56.com</code>(8채널 집계). <strong>② 핵심 주제(연구)</strong>: 그것을 <strong>만드는 과정 자체</strong> — 서로 다른 AI 에이전트·도구를 역할별로 협업시키는 <strong>이종 멀티에이전트 워크플로우</strong>. <strong>Peter의 평소 멀티에이전트 연구 주제와 직결</strong>(논문/책 자료화).
+      </div>
+      <p><strong>"무엇을 만들었나(홈피)"보다 "어떻게 — 어떤 에이전트들이 협업해 만들었나"가 본질이다.</strong> 요구사항 정리부터 디자인·구현·<strong>검증까지 전 과정</strong>을 이종 에이전트들이 릴레이로 수행했다.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title core">2 · ★ Hetero-Multi-Agent Workflow (핵심)</div>
+      <p>단일 AI에 전부 맡기지 않고, <strong>이종(異種)의 AI 에이전트·도구</strong>를 <em>오케스트레이션 / 디자인 / 구현 / 검증</em>으로 나눠 협업. 강점이 다른 모델·도구를 조합하고 역할 간 <strong>견제·검증</strong>으로 신뢰성 확보.</p>
+
+      <h3>2.1 협업 변천사 (실제 진행)</h3>
+      <div class="pipeline">
+        <div class="pipeline-step"><div class="step-num design">1</div><div class="step-body"><div class="step-name">요구사항·초기 설계 — Antigravity</div><div class="step-detail">Peter 요구사항을 Antigravity(Google Gemini 에이전트)가 청취·정리 → 워크플로우 설계 + 디자인툴(Relume·V0) 선정. 초기 오케스트레이터·아키텍트.</div></div></div>
+        <div class="pipeline-step"><div class="step-num gap">2</div><div class="step-body"><div class="step-name">오케스트레이터 공석</div><div class="step-detail">협업 중 Antigravity 교체·하차 → 오케스트레이터 자리 비움.</div></div></div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-body"><div class="step-name">체제 재편 — Peter + ChatGPT(Simone) + Claude</div><div class="step-detail">이전 프로젝트처럼 Peter+ChatGPT 공동 오케스트레이션, Peter가 에이전트 간 릴레이, Claude가 구현.</div></div></div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-body"><div class="step-name">1차 검증 → 미완 발견 — Codex</div><div class="step-detail">화면엔 카드가 떠 "완료" 보고됐으나, 독립 검증서 구현 미완·재현불가·배포 미연결 다수 발견(Prisma P3005, /vault Nginx 누락, systemd 트리거 부재, lint 미실행, 세션 secret fallback 등). <strong>"보이는 완료 ≠ 실제 완료."</strong></div></div></div>
+        <div class="pipeline-step"><div class="step-num">5</div><div class="step-body"><div class="step-name">Opus 교체 → 재구현·재검증</div><div class="step-detail">구현 모델을 Opus로 올려 미완분 수정·재검증(현재). 이 경험이 <strong>Agentic Engineering Execution Protocol</strong>(구현·동결·검증·수정·재검증 절차)을 낳음.</div></div></div>
+      </div>
+      <div class="info-box">요구사항·디자인·구현·<strong>검증 전 과정이 멀티에이전트 협업</strong>(사람 Peter가 릴레이). 핵심 교훈: <strong>에이전트 말=가설 · commit=검증대상 · 실행로그=증거 · 독립검증=판정 · Owner=최종승인</strong>. 좋은 구현 = Functional·Conformance·Reproducibility·Operational 4기준 충족. (Notion <em>"'완료했습니다'를 믿지 않게 된 날"</em>) — Peter의 연구 <strong>Context-Preserving Multi-Assistant Collaboration Layer</strong>(맥락 + 책임·증거의 연속성)와 직결.</div>
+      <div class="info-box"><strong>검증 자체도 멀티에이전트</strong> — Claude가 검증 기준(<code>VERIFICATION_CHECKLIST.md</code>) 작성 → Codex가 그에 의거 <strong>2·3차 독립 검증</strong>(라운드별 commit SHA 고정·증거 기반·delta 재검증) → ChatGPT(Simone)가 Peter <strong>자문역</strong>(체크리스트·진단 검토). 구현뿐 아니라 검증 절차 자체가 역할 분담된 멀티에이전트.</div>
+
+      <h3>2.2 역할별 참여 에이전트</h3>
+      <table>
+        <tr><th>에이전트 / 도구</th><th>종류</th><th>역할</th><th>시기/단계</th></tr>
+        <tr><td class="agent-cell">Antigravity</td><td>Google Gemini 에이전트</td><td>초기 오케스트레이터·아키텍트: 요구사항 정리·워크플로우 설계·디자인툴 선정</td><td>초기 (교체됨)</td></tr>
+        <tr><td class="agent-cell">Peter (원종석)</td><td>인간</td><td>오케스트레이터(공동)·결정권자·<strong>릴레이</strong></td><td>전 단계</td></tr>
+        <tr><td class="agent-cell">ChatGPT (Simone)</td><td>OpenAI GPT</td><td>공동 오케스트레이터 + Peter 자문역(설계·체크리스트 검토)</td><td>오케스트레이션·자문</td></tr>
+        <tr><td class="agent-cell">Relume <span class="badge badge-design">DESIGN</span></td><td>디자인 AI</td><td>사이트 구조·와이어프레임·컴포넌트</td><td>디자인</td></tr>
+        <tr><td class="agent-cell">V0 by Vercel <span class="badge badge-design">DESIGN</span></td><td>디자인 AI</td><td>UI 컴포넌트 생성(React/Tailwind)</td><td>디자인</td></tr>
+        <tr><td class="agent-cell">Claude (투투/OpenClaw)</td><td>코딩 AI</td><td>구현·통합·문서화 + 검증 체크리스트 작성</td><td>구현·검증</td></tr>
+        <tr><td class="agent-cell">Codex</td><td>검증 AI</td><td>체크리스트 의거 2·3차 독립 검증(증거 기반)</td><td>검증</td></tr>
+        <tr><td class="agent-cell">Hermes (헤라)</td><td>코딩 AI(별도 Claude)</td><td>연구 보조</td><td>보조</td></tr>
+      </table>
+      <p style="font-size:12px;color:#64748b">"이종(hetero)" = 서로 다른 벤더·종류의 AI(Antigravity·Relume·V0·Claude·Codex·GPT)를 한 워크플로우에 조합.</p>
+
+      <h3>2.3 설계 철학 — Boris Cherny "Loop Engineering"</h3>
+      <p>이 워크플로우·시스템은 <strong>Boris Cherny의 Loop Engineering 철학</strong>을 설계 단계에서 반영했다 — 그래서 <strong>단계별 상태저장 + 지속 검증</strong>을 계속한다.</p>
+      <ul>
+        <li><strong>상태 영속성</strong> — 각 단계 출력을 외부 기록, 체크포인트로 재개 가능. (옵시디언 볼트 = 메인 DB이자 상태 저장소)</li>
+        <li><strong>단계별 검증</strong> — 다음 단계 진입 전 검증(Codex 게이트, 검증 체크리스트).</li>
+        <li><strong>탈출/재시도 규칙</strong> · <strong>멱등성·재개 가능</strong>(클리퍼 재실행 안전) · <strong>단방향 흐름</strong> + 부작용 격리.</li>
+      </ul>
+
+      <h3>2.4 거버넌스 (신뢰성 장치)</h3>
+      <div class="info-box"><code>CLAUDE.md</code> 헌법: <strong>승인 추론 금지</strong> · <strong>계획≠실행</strong> · <strong>행위자 명시</strong> · <strong>실행증거 없는 완료보고 금지</strong> · <strong>메모리 무결성</strong> · 구현(Claude)/검증(Codex) 분리.</div>
+      <h3>2.5 협업 통신</h3>
+      <p>Slack <code>#all-agent-collab</code>(핸드오프 실험) · Notion Journal(업무일지·위반사례) · 검증 산출물(<code>VERIFICATION_CHECKLIST.md</code>).</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">3 · 요구사항</div>
+      <p><strong>기능</strong> — 8채널 카드 피드+필터, 카드→원문 링크(본문 이미지), 백오피스(로그인·삭제/복원/편집·SyncRun·"지금 클리핑"/"강제 갱신"·감사로그), 삭제 의도 영속, 일 1회 자동 수집.</p>
+      <p><strong>비기능</strong> — 단방향 흐름 · 멱등성·재개 가능 · 홈피/백오피스 볼트 읽기전용 · 비밀 env로만 · 개인 규모(1GB VPS).</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">4 · 기술 스펙</div>
+      <table>
+        <tr><th>영역</th><th>스택</th></tr>
+        <tr><td>홈피/백오피스</td><td>Next.js 16, React 19, TypeScript, Tailwind v4</td></tr>
+        <tr><td>ORM/DB</td><td>Prisma 6.19, SQLite</td></tr>
+        <tr><td>클리핑 에이전트</td><td>Python 3.12 (requests, beautifulsoup4, markdownify, Pillow)</td></tr>
+        <tr><td>발췌</td><td>LLM 다중 provider → truncation fallback</td></tr>
+        <tr><td>볼트 / 동기화</td><td>옵시디언(Markdown+이미지) / CouchDB livesync(<code>sync.swarm56.com</code>)</td></tr>
+        <tr><td>디자인</td><td>Relume(구조/와이어프레임), V0 by Vercel(UI 컴포넌트)</td></tr>
+        <tr><td>배포</td><td>AWS Lightsail(Ubuntu), systemd, Nginx, Let's Encrypt</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">5 · 아키텍처 (산출물 구조)</div>
+      <h3>5.1 데이터 흐름 (단방향)</h3>
+      <div class="code-block">소셜 8채널
+   <span class="arrow">│</span> <span class="comment">Phase A 클리핑 (전문 md + 본문이미지 + 링크치환 + LLM발췌)</span>
+   <span class="arrow">▼</span>
+<span class="hl">옵시디언 볼트 (메인 DB)</span>  raw/&lt;채널&gt;/*.md + _assets/*.webp
+   <span class="arrow">│</span> <span class="comment">Phase B 파생 (활성 suppression URL 스킵 = 삭제의도 보존)</span>
+   <span class="arrow">▼</span>
+<span class="hl">SQLite 파생캐시 (site-v5.db)</span>  <span class="arrow">→</span>  홈페이지 + 백오피스 (읽기 전용)</div>
+      <h3>5.2 삭제 영속성 "방식 B"</h3>
+      <p>삭제=FeedCard 제거+활성 SuppressionRecord → 재파생에도 부활 X. 복원=tombstone 해제+볼트md 재삽입(원자적). 삭제 키=<code>originalUrl</code>.</p>
+      <h3>5.3 배포</h3>
+      <p>Lightsail → Nginx(443) → swarm56-web(npm start :3000, <code>/opt/swarm56/app</code>) → site-v5.db. <code>/vault/</code> alias → 볼트 이미지. 일 1회 자동 수집(swarm56-agent.timer).</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">6 · 모듈별 역할</div>
+      <h3>6.1 클리핑 에이전트 (agent/, Python)</h3>
+      <table>
+        <tr><th>모듈</th><th>역할</th></tr>
+        <tr><td><code>main.py</code></td><td>Phase A/B 오케스트레이터, <code>SWARM56_FORCE=1</code>=강제 재클립</td></tr>
+        <tr><td><code>collectors/</code></td><td>채널별 수집(naver_blog·github·youtube·notion·swarm·instagram·facebook)</td></tr>
+        <tr><td><code>vault.py</code> · <code>db.py</code></td><td>볼트 입출력·dedup / frontmatter→FeedCard 파생·suppression·SyncRun</td></tr>
+        <tr><td><code>images.py</code> · <code>excerpt.py</code></td><td>본문이미지→webp(SSRF·재인코딩) / LLM 발췌→truncation</td></tr>
+        <tr><td><code>settings.py</code></td><td>env 설정(경로·토큰·키·상한)</td></tr>
+      </table>
+      <h3>6.2 홈피/백오피스 (personal-brand-hub/, Next.js)</h3>
+      <table>
+        <tr><th>모듈</th><th>역할</th></tr>
+        <tr><td><code>app/page.tsx</code> · <code>app/admin/</code></td><td>홈페이지 / 백오피스(가드·로그인·서버액션)</td></tr>
+        <tr><td><code>components/</code></td><td>hero·about·header·footer·feed-card (고정 문구)</td></tr>
+        <tr><td><code>lib/admin-repo.ts</code></td><td>삭제(방식B)·복원·편집·트리거·감사로그(트랜잭션)</td></tr>
+        <tr><td><code>lib/auth.ts</code> · <code>feed-repository.ts</code> · <code>md-frontmatter.ts</code></td><td>인증(bcrypt·세션·rate limit) / 조회 / 볼트 파싱(복원)</td></tr>
+        <tr><td><code>prisma/schema.prisma</code></td><td>FeedCard·SuppressionRecord·AdminAudit·SyncRun</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">7 · 채널 현황</div>
+      <table>
+        <tr><th>채널</th><th>상태</th><th>수집</th></tr>
+        <tr><td>네이버블로그·GitHub·YouTube·Notion·Swarm·Instagram</td><td><span class="badge badge-strong">LIVE</span></td><td>RSS / API / 스크래핑</td></tr>
+        <tr><td>LinkedIn · Facebook</td><td><span class="badge badge-limit">빈 채널</span></td><td>공식 API 제약 → UI 플레이스홀더(자동수집 안 함)</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">8 · 향후 로드맵</div>
+      <h3>옵시디언 지식그래프 시각화 <span class="badge badge-new">NEXT</span></h3>
+      <p>볼트 노드/링크를 홈피에 그래프뷰로 (직접구현 / Quartz / Obsidian Publish). 볼트가 이미 서버에 있어 거기서 추출.</p>
+      <h3>RAG <span class="badge badge-new">NEXT</span></h3>
+      <p>볼트 임베딩 → 의미검색·질의응답("내 글에게 물어보기").</p>
+      <h3>그 외</h3>
+      <ul><li>미연동 채널(LinkedIn·Facebook) → 백오피스 수동 등록 검토.</li><li>트리거 path-unit 설치, GitHub 릴리스 수집, 토큰 rotate, SSH 키 이동.</li></ul>
+    </div>
+
+    <div class="section">
+      <div class="section-title">9 · 운영 메모</div>
+      <ul>
+        <li>서버: Lightsail <code>54.116.19.34</code>. 앱 <code>/opt/swarm56/app</code>(npm start), DB <code>site-v5.db</code>, 볼트 <code>vault-v5</code>, 에이전트 <code>/opt/swarm56/agent</code>. systemd <code>swarm56-web</code>·<code>swarm56-agent.timer</code>.</li>
+        <li>배포: repo는 빌드본 복사로 운영 → 코드 변경은 서버 빌드+재시작 필요(푸시만으론 반영 X).</li>
+        <li>롤백: <code>app.old-*</code>·구 DB·백업 보존. 문구 수정: <code>components/홈피_문구_수정가이드.md</code>.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
