@@ -1,25 +1,21 @@
 [Unit]
-Description=Swarm56 Next.js Web
+Description=swarm56 web (Next.js)
 After=network.target
-Wants=network.target
 
 [Service]
 Type=simple
-User=swarm56-web
-Group=swarm56-web
-WorkingDirectory=/opt/swarm56/web/current/app
-EnvironmentFile=/etc/swarm56/web.env
-ExecStart=/usr/bin/node server.js
-
+User=ubuntu
+WorkingDirectory=/opt/swarm56/app
+# ⚠️ EnvironmentFile 사용 금지 (재발 방지 — 2026-06-29 핫픽스):
+#   Next는 /opt/swarm56/app/.env 를 @next/env(dotenv-expand)로 *직접* 로드한다.
+#   systemd EnvironmentFile 로 같은 .env 를 중복 로드하면:
+#     systemd가 .env의 \$2b\$10\$... 를 $2b$10$... 로 푼 뒤,
+#     @next/env(dotenv-expand)가 그 $2b·$10 을 (정의 안 된) 변수로 다시 확장해
+#     bcrypt 해시가 깨짐 → 비번이 맞아도 로그인 실패(verifyPassword false).
+#   → .env 는 앱 디렉토리에 두고 Next 가 단독 로드한다. EnvironmentFile 쓰지 말 것.
+ExecStart=/usr/bin/npm start
 Restart=on-failure
 RestartSec=5
-TimeoutStopSec=30
-KillSignal=SIGTERM
-
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectHome=true
-ProtectSystem=full
 
 [Install]
 WantedBy=multi-user.target

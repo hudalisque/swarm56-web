@@ -60,7 +60,7 @@ const attempts = new Map<string, { n: number; ts: number }>()
 export function rateLimited(key = "login"): boolean {
   const now = Date.now()
   const windowMs = 60 * 1000
-  const max = 5
+  const max = 10
   const e = attempts.get(key)
   if (!e || now - e.ts > windowMs) {
     attempts.set(key, { n: 1, ts: now })
