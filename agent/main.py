@@ -5,7 +5,7 @@ Phase B: 볼트 md → SQLite 카드 파생 (활성 suppression URL 스킵 = 삭
 실행: (homepage_project/ 에서) python -m agent.main
 watchdog/무한 loop 없음. 멱등·재개 가능.
 """
-from . import settings, db, images
+from . import settings, db, images, excerpt
 from .vault import write_md, existing_hash, iter_vault
 from .collectors import naver_blog, github, youtube, notion, swarm, instagram, facebook
 
@@ -41,7 +41,8 @@ def clip_channel(conn, channel: str, fetch_fn) -> None:
                     first = images.fetch_thumbnail(
                         rec.thumbnail_remote_url, channel, settings.VAULT_DIR, referer=rec.original_url
                     )
-                write_md(settings.VAULT_DIR, channel, rec, chash, body, first)
+                excerpt_text = excerpt.generate(rec.full_markdown, fallback=rec.excerpt)
+                write_md(settings.VAULT_DIR, channel, rec, chash, body, first, excerpt_text)
                 written += 1
                 print(f"  [MD] {rec.title}  (img {len(assets)})")
             except Exception as e:

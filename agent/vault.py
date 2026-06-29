@@ -48,8 +48,8 @@ def existing_hash(vault_dir: str, channel: str, rec):
         return None
 
 
-def write_md(vault_dir, channel, rec, content_hash_val, body_markdown, thumbnail_rel) -> str:
-    """전문 md 작성. body_markdown=이미지 치환된 본문, thumbnail_rel=대표 이미지 상대경로(or None)."""
+def write_md(vault_dir, channel, rec, content_hash_val, body_markdown, thumbnail_rel, excerpt=None) -> str:
+    """전문 md 작성. body_markdown=이미지 치환된 본문, thumbnail_rel=대표 이미지 상대경로(or None), excerpt=발췌."""
     folder, fname, relpath = _target(vault_dir, channel, rec)
     folder.mkdir(parents=True, exist_ok=True)
     fields = {
@@ -61,7 +61,7 @@ def write_md(vault_dir, channel, rec, content_hash_val, body_markdown, thumbnail
         "synced_at": datetime.now().isoformat(timespec="seconds"),
         "content_hash": content_hash_val,
         "external_id": rec.external_id or "",
-        "excerpt": rec.excerpt or "",
+        "excerpt": excerpt or rec.excerpt or "",
         "thumbnail": thumbnail_rel or "",
     }
     front = (

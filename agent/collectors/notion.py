@@ -36,6 +36,51 @@ def _title_of(page: dict) -> str:
     return "(제목 없음)"
 
 
+def _rt(rich) -> str:
+    return "".join(t.get("plain_text", "") for t in (rich or []))
+
+
+def _blocks_to_md(page_id: str) -> str:
+    """페이지 블록 → 마크다운(전문). 이미지 블록은 ![](url)로 → images.process가 _assets에 받음."""
+    if not page_id:
+        return ""
+    try:
+        r = requests.get(
+            f"{API}/blocks/{page_id}/children?page_size=100",
+            headers=_headers(), timeout=settings.HTTP_TIMEOUT,
+        )
+        if not r.ok:
+            return ""
+    except Exception:
+        return ""
+    out = []
+    for b in (r.json().get("results") or []):
+        t = b.get("type")
+        d = b.get(t, {}) if t else {}
+        if t == "paragraph":
+            out.append(_rt(d.get("rich_text")))
+        elif t in ("heading_1", "heading_2", "heading_3"):
+            pre = {"heading_1": "# ", "heading_2": "## ", "heading_3": "### "}[t]
+            out.append(pre + _rt(d.get("rich_text")))
+        elif t == "bulleted_list_item":
+            out.append("- " + _rt(d.get("rich_text")))
+        elif t == "numbered_list_item":
+            out.append("1. " + _rt(d.get("rich_text")))
+        elif t == "to_do":
+            out.append("- [ ] " + _rt(d.get("rich_text")))
+        elif t == "quote":
+            out.append("> " + _rt(d.get("rich_text")))
+        elif t == "code":
+            out.append("```\n" + _rt(d.get("rich_text")) + "\n```")
+        elif t == "image":
+            src = (d.get("file") or {}).get("url") or (d.get("external") or {}).get("url")
+            if src:
+                out.append(f"![]({src})")
+        elif t == "divider":
+            out.append("---")
+    return "\n\n".join(x for x in out if x.strip())
+
+
 def fetch() -> list[NormalizedRecord]:
     if not settings.NOTION_TOKEN or not settings.NOTION_DATABASE_ID:
         print("  [NOTION] 토큰/DB id 없음 — 스킵")
@@ -65,14 +110,15 @@ def fetch() -> list[NormalizedRecord]:
             continue
         title = _title_of(pg)
         pub = pg.get("created_time") or pg.get("last_edited_time") or ""
+        body = _blocks_to_md(pg.get("id"))
         records.append(
             NormalizedRecord(
                 channel="NOTION",
                 title=title,
                 original_url=url,
                 published_at=_parse(pub),
-                full_markdown=f"# {title}\n\n{url}\n",
-                excerpt="",
+                full_markdown=f"# {title}\n\n{body}\n\n{url}\n",
+                excerpt=(body[:150] + "…") if len(body) > 150 else body,
                 external_id=pg.get("id"),
                 thumbnail_remote_url=None,
             )

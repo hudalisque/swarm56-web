@@ -51,6 +51,15 @@ IMG_MAX_WIDTH = 1280            # 본문 이미지 최대 폭(개인 규모·고
 IMG_MAX_BYTES = 8_000_000       # 1장 다운로드 상한(안전망)
 DISK_STOP_PERCENT = 90          # 디스크 사용률 임계 — 초과 시 신규 이미지 다운로드 중단
 
+# 발췌 LLM (다중 provider 순차 → 전부 실패 시 truncation fallback). 키는 env(비밀)로만.
+OPENAI_API_KEY = os.environ.get("SWARM56_OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("SWARM56_OPENAI_MODEL", "gpt-4o-mini")
+GEMINI_API_KEY = os.environ.get("SWARM56_GEMINI_API_KEY", "")
+GEMINI_MODEL = os.environ.get("SWARM56_GEMINI_MODEL", "gemini-1.5-flash")
+ANTHROPIC_API_KEY = os.environ.get("SWARM56_ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL = os.environ.get("SWARM56_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+EXCERPT_MAX = 200               # 발췌 최대 길이(문자)
+
 HTTP_TIMEOUT = 15
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
