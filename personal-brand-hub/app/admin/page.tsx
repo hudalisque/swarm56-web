@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import { isAuthed } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { listCards, listSuppressed, listSyncRuns } from "@/lib/admin-repo"
-import { logoutAction, clipNowAction, deleteAction, restoreAction, editAction } from "./actions"
+import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction, editAction } from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -30,6 +30,9 @@ export default async function AdminPage() {
         <div className="flex gap-2">
           <form action={clipNowAction}>
             <button className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-700">지금 클리핑</button>
+          </form>
+          <form action={forceReclipAction}>
+            <button className="rounded-md border border-amber-400 px-3 py-1.5 text-sm text-amber-700 hover:bg-amber-50">강제 갱신</button>
           </form>
           <form action={logoutAction}>
             <button className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100">로그아웃</button>

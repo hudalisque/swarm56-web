@@ -77,3 +77,15 @@ export async function triggerClip(actor: string) {
   }
   await audit("CLIP_NOW", null, actor)
 }
+
+/** "강제 갱신"(#10) — force 트리거 파일 기록. systemd path-unit이 SWARM56_FORCE=1로 에이전트 실행. */
+export async function triggerForceReclip(actor: string) {
+  const f = process.env.SWARM56_FORCE_TRIGGER || "/var/lib/swarm56/triggers/force.now"
+  try {
+    fs.mkdirSync(path.dirname(f), { recursive: true })
+    fs.writeFileSync(f, String(Date.now()))
+  } catch {
+    /* 로컬 등 디렉토리 없으면 무시 */
+  }
+  await audit("FORCE_RECLIP", null, actor)
+}

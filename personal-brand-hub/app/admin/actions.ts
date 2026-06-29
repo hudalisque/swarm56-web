@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import {
   verifyPassword, createSession, destroySession, isAuthed, rateLimited,
 } from "@/lib/auth"
-import { deleteCard, restoreCard, editCard, triggerClip } from "@/lib/admin-repo"
+import { deleteCard, restoreCard, editCard, triggerClip, triggerForceReclip } from "@/lib/admin-repo"
 
 const ACTOR = "admin"
 
@@ -63,5 +63,11 @@ export async function editAction(formData: FormData) {
 export async function clipNowAction() {
   await guard()
   await triggerClip(ACTOR)
+  refresh()
+}
+
+export async function forceReclipAction() {
+  await guard()
+  await triggerForceReclip(ACTOR)
   refresh()
 }

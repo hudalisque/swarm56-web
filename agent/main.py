@@ -5,8 +5,13 @@ Phase B: 볼트 md → SQLite 카드 파생 (활성 suppression URL 스킵 = 삭
 실행: (homepage_project/ 에서) python -m agent.main
 watchdog/무한 loop 없음. 멱등·재개 가능.
 """
+import os
+
 from . import settings, db, images, excerpt
 from .vault import write_md, existing_hash, iter_vault
+
+# 강제 갱신(#10): dedup(볼트 md 존재) 스킵을 무시하고 재수집·덮어쓰기 → 원본 수정 반영
+FORCE = os.environ.get("SWARM56_FORCE") == "1"
 from .collectors import naver_blog, github, youtube, notion, swarm, instagram, facebook
 
 CHANNELS = [
@@ -31,7 +36,7 @@ def clip_channel(conn, channel: str, fetch_fn) -> None:
         for rec in records:
             try:
                 chash = db.content_hash(rec.full_markdown)
-                if existing_hash(settings.VAULT_DIR, channel, rec) == chash:
+                if not FORCE and existing_hash(settings.VAULT_DIR, channel, rec) == chash:
                     skipped += 1
                     continue
                 body, assets, first = images.process(
