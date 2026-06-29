@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swarm56 기술 개요 | Technical Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  @page { size: A4 portrait; margin: 20mm 18mm; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', -apple-system, sans-serif; font-size: 13px; line-height: 1.7; color: #1a1a2e; background: #f8f9fc; padding: 40px 20px; }
+  .page { max-width: 820px; margin: 0 auto 28px; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+  .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: #fff; padding: 36px 40px 28px; }
+  .header-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header-sub { font-size: 13px; color: #94a3b8; }
+  .header-meta { display: flex; gap: 24px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; }
+  .meta-item { font-size: 12px; color: #cbd5e1; }
+  .meta-item span { color: #e2e8f0; font-weight: 600; }
+  .body { padding: 36px 40px; }
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #64748b; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+  .section h3 { font-size: 14px; font-weight: 700; color: #0f172a; margin: 18px 0 8px; }
+  .section p { margin-bottom: 10px; }
+  .section ul { margin: 0 0 12px 18px; }
+  .section li { margin-bottom: 4px; }
+  .summary-box { background: #f0f7ff; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 13px; color: #1e3a5f; line-height: 1.8; }
+  .info-box { background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0; padding: 14px 20px; margin-bottom: 16px; font-size: 12.5px; color: #14532d; line-height: 1.8; }
+  .warning-box { background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 8px 8px 0; padding: 14px 20px; margin-bottom: 16px; font-size: 12.5px; color: #7c2d12; line-height: 1.8; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 12px; }
+  th { background: #f8fafc; color: #475569; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #e2e8f0; font-size: 11px; letter-spacing: 0.5px; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; line-height: 1.6; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: 'Courier New', monospace; font-size: 11px; background: #f1f5f9; color: #475569; padding: 1px 5px; border-radius: 3px; }
+  .code-block { background: #0f172a; border-radius: 8px; padding: 20px 24px; color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8; overflow-x: auto; white-space: pre; margin-bottom: 12px; }
+  .code-block .comment { color: #64748b; }
+  .code-block .key { color: #7dd3fc; }
+  .code-block .value { color: #86efac; }
+  .code-block .hl { color: #fbbf24; font-weight: 700; }
+  .code-block .arrow { color: #f472b6; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; }
+  .badge-strong { background: #15803d; color: #fff; }
+  .badge-new    { background: #7c3aed; color: #fff; }
+  .badge-limit  { background: #64748b; color: #fff; }
+  .pipeline { display: flex; flex-direction: column; }
+  .pipeline-step { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+  .pipeline-step:last-child { border-bottom: none; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: #1e3a5f; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-body { flex: 1; }
+  .step-name { font-size: 13px; font-weight: 700; color: #0f172a; font-family: 'Courier New', monospace; margin-bottom: 2px; }
+  .step-detail { font-size: 12px; color: #64748b; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-label">Technical Overview</div>
+    <h1>swarm56 — 기술 개요</h1>
+    <div class="header-sub">퍼스널 브랜드 허브 + 이종 멀티에이전트 협업 워크플로우</div>
+    <div class="header-meta">
+      <div class="meta-item">버전 <span>v5 (라이브)</span></div>
+      <div class="meta-item">기준일 <span>2026-06-29</span></div>
+      <div class="meta-item">라이브 <span>swarm56.com</span></div>
+      <div class="meta-item">브랜치 <span>fix/r1-obsidian-single-source</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- 1. 개요 -->
+    <div class="section">
+      <div class="section-title">1 · 프로젝트 개요</div>
+      <div class="summary-box">
+        <strong>swarm56</strong> = 원종석(Jongseok Won)의 퍼스널 브랜드 허브. 8개 소셜 채널에 흩어진 글·활동을 한 곳(swarm56.com)에 모아 카드 피드로 보여준다.
+      </div>
+      <p><strong>두 가지 목적:</strong></p>
+      <ul>
+        <li><strong>표면 목적</strong> — 채널별 콘텐츠 집계 홈페이지 + 어드민 백오피스.</li>
+        <li><strong>실제 연구 목적</strong> — <strong>이종 멀티에이전트 협업 워크플로우</strong> 확립·사례연구 (구현=Claude, 검증=Codex, 오케스트레이션=Peter 역할 분리). 논문/책 자료화.</li>
+      </ul>
+      <p><strong>핵심 철학</strong>: 옵시디언 볼트를 <strong>단일 소스(메인 DB)</strong>로 두고 — 소셜 → 클리핑 → 볼트 → 파생캐시 → 홈피의 <strong>단방향 데이터 흐름</strong>.</p>
+    </div>
+
+    <!-- 2. 요구사항 -->
+    <div class="section">
+      <div class="section-title">2 · 요구사항</div>
+      <h3>기능</h3>
+      <ul>
+        <li>8개 채널(네이버블로그·Notion·YouTube·GitHub·LinkedIn·Instagram·Facebook·Swarm) 콘텐츠 카드 피드 + 채널 필터.</li>
+        <li>카드 → 원문 링크(noopener), 본문 이미지 포함.</li>
+        <li>백오피스: 로그인, 카드 삭제/복원/편집, 수집 로그(SyncRun), "지금 클리핑"/"강제 갱신" 트리거, 감사 로그.</li>
+        <li>삭제 의도 영속 — 삭제한 카드는 재수집/재파생에도 부활 X.</li>
+        <li>일 1회 자동 수집.</li>
+      </ul>
+      <h3>비기능</h3>
+      <ul>
+        <li>단방향 데이터 흐름(볼트→SQLite→홈피, 역방향 쓰기 금지).</li>
+        <li>멱등성·재개 가능(클리퍼 중단 후 재실행 안전).</li>
+        <li>홈피·백오피스는 볼트에 쓰지 않음(읽기 전용).</li>
+        <li>비밀(토큰·키)은 env로만, 코드/Git 금지.</li>
+        <li>개인 규모(저비용 1GB VPS) — 무거운 인프라 지양.</li>
+      </ul>
+    </div>
+
+    <!-- 3. 스펙 -->
+    <div class="section">
+      <div class="section-title">3 · 기술 스펙</div>
+      <table>
+        <tr><th>영역</th><th>스택</th></tr>
+        <tr><td>홈피/백오피스</td><td>Next.js 16, React 19, TypeScript, Tailwind v4</td></tr>
+        <tr><td>ORM / DB</td><td>Prisma 6.19, SQLite</td></tr>
+        <tr><td>클리핑 에이전트</td><td>Python 3.12 (requests, beautifulsoup4, markdownify, Pillow)</td></tr>
+        <tr><td>발췌(요약)</td><td>LLM 다중 provider(OpenAI/Gemini/Anthropic) HTTP → 실패 시 truncation</td></tr>
+        <tr><td>볼트</td><td>옵시디언 (Markdown + 첨부 이미지)</td></tr>
+        <tr><td>동기화(선택)</td><td>CouchDB (Obsidian livesync, <code>sync.swarm56.com</code>)</td></tr>
+        <tr><td>배포</td><td>AWS Lightsail VPS(Ubuntu), systemd, Nginx, Let's Encrypt</td></tr>
+      </table>
+    </div>
+
+    <!-- 4. 아키텍처 -->
+    <div class="section">
+      <div class="section-title">4 · 아키텍처</div>
+      <h3>4.1 데이터 흐름 (단방향)</h3>
+      <div class="code-block">소셜 8채널
+   <span class="arrow">│</span>  <span class="comment">Phase A: 클리핑 (전문 md + 본문이미지 _assets/*.webp + 링크치환 + LLM발췌)</span>
+   <span class="arrow">▼</span>
+<span class="hl">옵시디언 볼트 (메인 DB)</span>   raw/&lt;채널&gt;/*.md  +  _assets/*.webp
+   <span class="arrow">│</span>  <span class="comment">Phase B: 파생 (활성 suppression URL 스킵 = 삭제의도 보존)</span>
+   <span class="arrow">▼</span>
+<span class="hl">SQLite 파생캐시 (site-v5.db)</span>   FeedCard · SuppressionRecord · AdminAudit · SyncRun
+   <span class="arrow">│</span>  <span class="comment">읽기 전용</span>
+   <span class="arrow">▼</span>
+홈페이지(Next.js)  +  백오피스(/admin)</div>
+      <div class="info-box">홈피·백오피스는 SQLite만 읽는다. 볼트 원본은 건드리지 않음. 클리퍼만 볼트에 쓴다.</div>
+
+      <h3>4.2 삭제 영속성 — "방식 B" (Suppression / Tombstone)</h3>
+      <div class="code-block"><span class="key">삭제</span>   → FeedCard 행 제거  +  SuppressionRecord 기록(restoredAt=null)
+<span class="key">재파생</span> → 활성 suppression URL? <span class="arrow">──</span> 예: 스킵(부활 X) / 아니오: 카드 생성
+<span class="key">복원</span>   → tombstone 해제(restoredAt=now) + 볼트 md에서 카드 재삽입  <span class="hl">[하나의 트랜잭션]</span></div>
+      <p>삭제 키 = <code>originalUrl</code> (재파생에도 안정). 삭제/복원/편집 + 감사로그는 한 트랜잭션(원자성).</p>
+
+      <h3>4.3 배포 토폴로지</h3>
+      <div class="code-block"><span class="comment">AWS Lightsail 54.116.19.34 (Ubuntu, Seoul)</span>
+Nginx :443 (swarm56.com)
+   <span class="arrow">├─</span> proxy <span class="arrow">→</span> swarm56-web (npm start :3000, /opt/swarm56/app) <span class="arrow">→</span> site-v5.db
+   <span class="arrow">└─</span> /vault/ alias <span class="arrow">→</span> /var/lib/swarm56/vault-v5/raw/
+swarm56-agent.timer (매일 04:00 UTC) <span class="arrow">→</span> 클리핑 에이전트 <span class="arrow">→</span> vault-v5 <span class="arrow">→</span> site-v5.db</div>
+      <div class="warning-box"><strong>주의</strong>: 앱의 <code>.env</code>는 Next(@next/env)가 단독 로드한다. systemd <code>EnvironmentFile</code> 사용 금지 — 이중 로드 시 bcrypt 해시의 <code>$</code>가 깨져 로그인 실패(2026-06-29 핫픽스).</div>
+    </div>
+
+    <!-- 5. 워크플로우 + 에이전트 -->
+    <div class="section">
+      <div class="section-title">5 · 워크플로우 + 역할별 참여 에이전트</div>
+      <div class="pipeline">
+        <div class="pipeline-step"><div class="step-num">1</div><div class="step-body"><div class="step-name">Peter — 오케스트레이터</div><div class="step-detail">연구 방향·범위·우선순위·최종 승인 지시 (모든 결정권 보유)</div></div></div>
+        <div class="pipeline-step"><div class="step-num">2</div><div class="step-body"><div class="step-name">Claude — 구현</div><div class="step-detail">코드·문서 산출. 검증·판정·임의 커밋·운영변경은 권한 밖(승인 후만)</div></div></div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-body"><div class="step-name">Codex — 독립 검증</div><div class="step-detail">구현자 주장 무시, 직접 실행·증거 기반 PASS/FAIL. 증거 없는 PASS 불인정</div></div></div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-body"><div class="step-name">Peter — 채택 결정</div><div class="step-detail">검증 결과 검토 → CONDITIONAL ACCEPT / 추가 수정 지시</div></div></div>
+      </div>
+      <table>
+        <tr><th>에이전트</th><th>역할</th><th>비고</th></tr>
+        <tr><td class="step-name" style="font-size:12px">Peter</td><td>오케스트레이터·결정권자</td><td>모든 결정권</td></tr>
+        <tr><td class="step-name" style="font-size:12px">Claude (투투/OpenClaw)</td><td>구현</td><td>승인 후만 커밋·운영변경</td></tr>
+        <tr><td class="step-name" style="font-size:12px">Codex</td><td>독립 검증자</td><td>증거 기반, PASS/FAIL</td></tr>
+        <tr><td class="step-name" style="font-size:12px">GPT (Simone)</td><td>협업 검토</td><td>설계·체크리스트 리뷰</td></tr>
+        <tr><td class="step-name" style="font-size:12px">Hermes (헤라)</td><td>별도 Claude 인스턴스</td><td>연구 보조</td></tr>
+      </table>
+      <div class="info-box"><strong>거버넌스(CLAUDE.md 헌법)</strong>: 승인 추론 금지 · 계획≠실행 · 행위자 명시 · 실행증거 없는 완료보고 금지 · 메모리 무결성. 협업 통신 = Slack <code>#all-agent-collab</code>, Notion Journal(업무일지·위반사례).</div>
+    </div>
+
+    <!-- 6. 모듈 -->
+    <div class="section">
+      <div class="section-title">6 · 모듈별 역할</div>
+      <h3>6.1 클리핑 에이전트 (agent/, Python)</h3>
+      <table>
+        <tr><th>모듈</th><th>역할</th></tr>
+        <tr><td><code>main.py</code></td><td>오케스트레이터. Phase A(채널→볼트)·B(볼트→SQLite). <code>SWARM56_FORCE=1</code>=강제 재클립</td></tr>
+        <tr><td><code>settings.py</code></td><td>env 기반 설정(경로·채널ID·토큰·LLM키·이미지 상한)</td></tr>
+        <tr><td><code>collectors/</code></td><td>채널별 수집: naver_blog·github·youtube·notion·swarm·instagram·facebook</td></tr>
+        <tr><td><code>vault.py</code></td><td>볼트 md 쓰기(frontmatter)·읽기·dedup(content_hash)</td></tr>
+        <tr><td><code>images.py</code></td><td>본문 이미지 → _assets/*.webp (SSRF차단·MIME·크기·Pillow재인코딩·디스크 서킷브레이커)</td></tr>
+        <tr><td><code>excerpt.py</code></td><td>발췌: LLM 다중 provider → truncation fallback (클립 때 1회)</td></tr>
+        <tr><td><code>db.py</code></td><td>frontmatter→FeedCard 파생, suppression 스킵, SyncRun 로그</td></tr>
+        <tr><td><code>thumbnail.py · models.py</code></td><td>썸네일 / 정규화 레코드 타입</td></tr>
+      </table>
+      <p>볼트 frontmatter 키: <code>title·channel·source·url·published·synced_at·content_hash·external_id·excerpt·thumbnail</code></p>
+      <h3>6.2 홈피/백오피스 (personal-brand-hub/, Next.js)</h3>
+      <table>
+        <tr><th>모듈</th><th>역할</th></tr>
+        <tr><td><code>app/page.tsx</code></td><td>홈페이지(hero + Social Hub 카드 피드), SQLite 읽기</td></tr>
+        <tr><td><code>app/admin/</code></td><td>백오피스: page(가드+UI)·login·actions(서버액션)</td></tr>
+        <tr><td><code>components/</code></td><td>hero-section·about-section·site-header·site-footer·feed-card (고정 문구)</td></tr>
+        <tr><td><code>lib/feed-repository.ts</code></td><td>홈피 카드 조회(읽기전용)</td></tr>
+        <tr><td><code>lib/admin-repo.ts</code></td><td>삭제(방식B)·복원·편집·트리거파일·감사로그(트랜잭션)</td></tr>
+        <tr><td><code>lib/auth.ts</code></td><td>bcrypt 검증 + HMAC 세션쿠키 + 로그인 rate limit</td></tr>
+        <tr><td><code>lib/md-frontmatter.ts</code></td><td>볼트 md 파싱(복원용, 읽기전용, traversal 차단)</td></tr>
+        <tr><td><code>prisma/schema.prisma</code></td><td>FeedCard·SuppressionRecord·AdminAudit·SyncRun</td></tr>
+      </table>
+    </div>
+
+    <!-- 7. 채널 -->
+    <div class="section">
+      <div class="section-title">7 · 채널 현황</div>
+      <table>
+        <tr><th>채널</th><th>상태</th><th>수집 방식</th></tr>
+        <tr><td>네이버 블로그</td><td><span class="badge badge-strong">LIVE</span></td><td>RSS + 본문 스크래핑</td></tr>
+        <tr><td>GitHub</td><td><span class="badge badge-strong">LIVE</span></td><td>공개 레포 (+릴리스 예정)</td></tr>
+        <tr><td>YouTube</td><td><span class="badge badge-strong">LIVE</span></td><td>채널 RSS (무인증)</td></tr>
+        <tr><td>Notion</td><td><span class="badge badge-strong">LIVE</span></td><td>Integration 토큰 + DB 페이지 본문(blocks)</td></tr>
+        <tr><td>Swarm</td><td><span class="badge badge-strong">LIVE</span></td><td>Foursquare OAuth</td></tr>
+        <tr><td>Instagram</td><td><span class="badge badge-strong">LIVE</span></td><td>Graph API (장기토큰 자동갱신)</td></tr>
+        <tr><td>LinkedIn</td><td><span class="badge badge-limit">빈 채널</span></td><td>공식 API 제약 → UI 플레이스홀더만. 수동 시도 기록</td></tr>
+        <tr><td>Facebook</td><td><span class="badge badge-limit">빈 채널</span></td><td>앱검수·페이지권한 장벽 → 자동수집 안 함</td></tr>
+      </table>
+      <p>원칙: "남에게 공개로 보이는 것만 전문 클립."</p>
+    </div>
+
+    <!-- 8. 로드맵 -->
+    <div class="section">
+      <div class="section-title">8 · 향후 로드맵</div>
+      <h3>8.1 옵시디언 지식그래프 시각화 <span class="badge badge-new">NEXT</span></h3>
+      <p>볼트 노트·링크 관계를 <strong>홈피에 그래프 뷰</strong>로 시각화 (Obsidian Graph view를 웹으로). 옵션: (a) swarm56.com 직접 구현(D3/그래프 라이브러리), (b) Quartz/Digital Garden 정적사이트 임베드, (c) Obsidian Publish(유료). 볼트가 이미 서버에 있어 거기서 노드/엣지 추출.</p>
+      <h3>8.2 RAG (검색·질의) <span class="badge badge-new">NEXT</span></h3>
+      <p>볼트 콘텐츠 임베딩 → 의미 검색 / 질의응답. 홈피에 "내 글에게 물어보기" 인터페이스.</p>
+      <h3>8.3 미연동 채널</h3>
+      <p><strong>LinkedIn·Facebook</strong>: 자동 수집이 막히면 백오피스 <strong>수동 등록</strong> 경로 검토.</p>
+      <h3>8.4 운영 보완</h3>
+      <ul>
+        <li>백오피스 "지금 클리핑/강제 갱신" → systemd 트리거 path-unit 설치(현재 미설치).</li>
+        <li>GitHub 릴리스 수집 추가.</li>
+        <li>노출 토큰 rotate, SSH 키 repo 밖 보관, CouchDB(sync) 정리/활용 결정.</li>
+      </ul>
+    </div>
+
+    <!-- 9. 운영 -->
+    <div class="section">
+      <div class="section-title">9 · 운영 메모</div>
+      <ul>
+        <li>서버: AWS Lightsail <code>54.116.19.34</code>(Ubuntu, Seoul). 앱 <code>/opt/swarm56/app</code>(npm start), DB <code>/var/lib/swarm56/web/site-v5.db</code>, 볼트 <code>/var/lib/swarm56/vault-v5</code>, 에이전트 <code>/opt/swarm56/agent</code>(+venv).</li>
+        <li>배포: repo는 git이 아닌 <strong>빌드본 복사</strong>로 운영 → 문구/코드 변경은 <strong>서버 빌드+재시작</strong> 필요(푸시만으로 라이브 반영 안 됨).</li>
+        <li>롤백: 배포 시 <code>app.old-*</code>·<code>agent.old-*</code>·구 DB·백업 보존.</li>
+        <li>문구 수정 가이드: <code>personal-brand-hub/components/홈피_문구_수정가이드.md</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
