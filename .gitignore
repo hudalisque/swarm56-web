@@ -48,3 +48,6 @@ web/next-env.d.ts
 
 # SSH 키 등 비밀 — 절대 커밋 금지
 *.pem
+
+# 서버 IP·SSH 접속정보 포함 — public repo 유출 방지 (로컬 전용)
+AGENTS.md

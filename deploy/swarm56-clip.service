@@ -1,15 +1,19 @@
 [Unit]
 Description=Swarm56 클리핑 에이전트 1회 실행 (백오피스 "지금 클리핑" 트리거)
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=swarm56-web
-Group=swarm56-web
-WorkingDirectory=/opt/swarm56/agent/current
-# 토큰/키는 여기서만 주입(코드/Git 금지). root:swarm56-web 0640.
+User=ubuntu
+WorkingDirectory=/opt/swarm56
+# v5 경로(SWARM56_VAULT_DIR=vault-v5, SWARM56_DB_PATH=site-v5.db)는 agent.env가 단일 소스로 제공.
+# ⚠️ 낡은 vault/site.db inline Environment= 는 두지 않는다(구경로로 기록되어 이미지·데이터 깨짐 — KNOWN_ISSUES.md 참조).
+# THUMBNAIL/IG_TOKEN은 agent.env에 없으므로 여기서 주입(정기 swarm56-agent.service와 동일).
 EnvironmentFile=/etc/swarm56/agent.env
-ExecStart=/opt/swarm56/agent/current/.venv/bin/python -m agent.main
+Environment=SWARM56_THUMBNAIL_DIR=/var/lib/swarm56/web/thumbnails
+Environment=SWARM56_IG_TOKEN_FILE=/var/lib/swarm56/ig_token
+ExecStart=/opt/swarm56/agent-venv/bin/python -m agent.main
 # 처리 후 트리거 파일 제거 → 중복 실행 방지(멱등)
 ExecStartPost=/bin/rm -f /var/lib/swarm56/triggers/clip.now
 TimeoutStartSec=900

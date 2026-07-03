@@ -88,3 +88,4 @@ VPS·CouchDB 현황 기록, 8채널 capability 가정. 코드 변경 없음.
 ## 비가역/운영 주의
 - R2 Post drop, R7 운영 DB migration·Nginx·cert = 비가역(백업 후 수행, 완료).
 - CouchDB decommission 없음(유지). 자동 hard delete 없음(soft status만).
+- ⚠️ **알려진 잠재 위험·repo↔서버 드리프트는 [KNOWN_ISSUES.md](KNOWN_ISSUES.md) 참조** (2026-07-03 백오피스 트리거 미작동 조사 중 발견). 검증 절차 회고: [verification/PROCESS_RETROSPECTIVE.md](verification/PROCESS_RETROSPECTIVE.md).

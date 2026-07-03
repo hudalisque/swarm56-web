@@ -2,16 +2,24 @@ import { redirect } from "next/navigation"
 import { isAuthed } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { listCards, listSuppressed, listSyncRuns } from "@/lib/admin-repo"
-import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction, editAction } from "./actions"
+import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction } from "./actions"
+import { EditCard } from "./edit-card"
 
 export const dynamic = "force-dynamic"
 
+// KST(Asia/Seoul) 기준 YYYY-MM-DD HH:MM 표기. (toISOString은 UTC라 +9h가 반영 안 됨)
 function ymd(d: Date) {
-  return new Date(d).toISOString().slice(0, 16).replace("T", " ")
+  return new Date(d).toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 16)
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ req?: string }> }) {
   if (!(await isAuthed())) redirect("/admin/login")
+
+  const sp = await searchParams
+  const reqMsg =
+    sp.req === "clip" ? "클리핑을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
+    : sp.req === "force" ? "강제 갱신을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
+    : null
 
   const [cards, suppressed, runs, audits] = await Promise.all([
     listCards(),
@@ -22,6 +30,9 @@ export default async function AdminPage() {
 
   return (
     <div className="mx-auto max-w-5xl p-6 text-neutral-900">
+      {reqMsg && (
+        <div className="mb-4 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{reqMsg}</div>
+      )}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">swarm56 Admin</h1>
@@ -51,15 +62,7 @@ export default async function AdminPage() {
               <span className="text-xs text-neutral-400">{ymd(c.publishedAt)}</span>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              <details className="inline">
-                <summary className="cursor-pointer rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100">편집</summary>
-                <form action={editAction} className="mt-2 flex flex-col gap-2">
-                  <input type="hidden" name="originalUrl" value={c.originalUrl} />
-                  <input name="title" defaultValue={c.title} className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
-                  <textarea name="excerpt" defaultValue={c.excerpt ?? ""} rows={2} className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
-                  <button className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white hover:bg-neutral-700">저장</button>
-                </form>
-              </details>
+              <EditCard originalUrl={c.originalUrl} title={c.title} excerpt={c.excerpt} />
               <details className="inline">
                 <summary className="cursor-pointer rounded border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50">삭제</summary>
                 <form action={deleteAction} className="mt-2 flex flex-col gap-2">

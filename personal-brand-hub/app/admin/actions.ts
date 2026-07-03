@@ -49,7 +49,8 @@ export async function restoreAction(formData: FormData) {
   }
 }
 
-export async function editAction(formData: FormData) {
+// useActionState용: (prevState, formData) 시그니처. 저장 성공 여부를 반환해 클라가 폼을 닫게 한다.
+export async function editAction(_prev: unknown, formData: FormData) {
   await guard()
   const url = String(formData.get("originalUrl") || "")
   const title = String(formData.get("title") || "").trim()
@@ -57,17 +58,21 @@ export async function editAction(formData: FormData) {
   if (url && title) {
     await editCard(url, title, excerpt, ACTOR)
     refresh()
+    return { ok: true }
   }
+  return { ok: false }
 }
 
 export async function clipNowAction() {
   await guard()
   await triggerClip(ACTOR)
   refresh()
+  redirect("/admin?req=clip") // 요청 접수 피드백 (비동기 — 결과는 SyncRun 로그에 반영)
 }
 
 export async function forceReclipAction() {
   await guard()
   await triggerForceReclip(ACTOR)
   refresh()
+  redirect("/admin?req=force")
 }
