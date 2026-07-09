@@ -24,7 +24,8 @@
 - **증상:** 프로덕션 서버 공인 IP가 **public repo의 커밋된 문서들에 평문으로 존재**한다. (이 문서에는 재기재하지 않음 — 값은 로컬 전용 `AGENTS_v2.md` 참조)
 - **증거:** `PROJECT_OVERVIEW.md`(:164·:195), `PROJECT_OVERVIEW.html`(:194·:241), `DOCUMENTATION.md`(:141), `DBMS_REVIEW.md`(:4), `PHASES.md`(:33), `deploy/phase_status.md` 등 — 모두 tracked 상태로 push됨(`github.com/hudalisque/swarm56-web` = public). AGENTS.md만 07-03에 gitignore로 차단됐음.
 - **언제 터지나:** 상시 노출 상태. IP를 아는 공격자는 도메인 뒤 Cloudflare 같은 보호 없이 서버를 직접 스캔·공격 가능(SSH 포트 등). 단 SSH는 키 인증 전용이라 즉시 위험은 제한적.
-- **어디를 고치나:** ① v2 문서 세대는 IP 미기재로 작성됨(이 문서 포함) — v2를 canonical로 쓰고 ② 원본 문서들의 IP는 히스토리에 이미 있으므로 완전 제거는 불가(BFG 등 히스토리 재작성은 과함) → 실질 대응 = **Lightsail 방화벽에서 SSH 접근 IP 제한** 또는 IP 변경(Static IP 재할당) 검토. Peter 판단 대기.
+- **어디를 고치나:** ① v2 문서 세대는 IP 미기재로 작성됨(이 문서 포함) ② 원본 문서들의 IP는 히스토리에 이미 있으므로 완전 제거는 불가(히스토리 재작성은 과함).
+- **✅ 대응 완료(2026-07-10, Peter 실행·Claude 검증):** Lightsail 방화벽 **SSH(22) → 집 IP 한정 제한**(Restrict to IP) + **IPv6 SSH 규칙 삭제**. 검증: 허용 IP에서 SSH 정상, 사이트 200 무회귀. 잔여 노출면 = 80/443(공개 웹, 의도됨)뿐. Lightsail 브라우저 SSH가 비상 접속 경로(집 IP 변경 시 콘솔에서 갱신). AWS 루트 MFA도 등록 진행됨.
 
 ---
 
