@@ -78,9 +78,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <label className="text-xs text-neutral-500">요약 (카드에 표시될 설명)</label>
             <textarea name="description" required rows={3} className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
             <label className="text-xs text-neutral-500">HTML 문서 (카드 링크 대상, 영문 파일명)</label>
-            <input type="file" name="html" accept=".html" required className="text-sm" />
+            <input type="file" name="html" accept=".html" required className="text-sm text-neutral-500 file:mr-3 file:cursor-pointer file:rounded-md file:border file:border-neutral-300 file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-neutral-900 hover:file:bg-neutral-100" />
             <label className="text-xs text-neutral-500">MD 문서 (볼트 지식그래프용, 영문 파일명)</label>
-            <input type="file" name="md" accept=".md" required className="text-sm" />
+            <input type="file" name="md" accept=".md" required className="text-sm text-neutral-500 file:mr-3 file:cursor-pointer file:rounded-md file:border file:border-neutral-300 file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-neutral-900 hover:file:bg-neutral-100" />
             <label className="text-xs text-neutral-500">카테고리 태그 (쉼표 구분, 예: Multi-Agent, Docs)</label>
             <input name="tags" placeholder="Multi-Agent, Docs" className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
             <button className="mt-1 self-start rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-700">카드 추가</button>
