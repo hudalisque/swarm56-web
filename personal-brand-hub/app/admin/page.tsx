@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import { isAuthed } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { listCards, listSuppressed, listSyncRuns } from "@/lib/admin-repo"
-import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction, addProjectCardAction } from "./actions"
+import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction, addProjectCardAction, deleteProjectCardAction } from "./actions"
 import { listProjectCards } from "@/lib/admin-repo"
 import { EditCard } from "./edit-card"
 
@@ -21,6 +21,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     sp.req === "clip" ? "클리핑을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
     : sp.req === "force" ? "강제 갱신을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
     : sp.req === "card" ? "프로젝트 카드가 추가되었습니다 — 홈 Work/Projects에 바로 반영됩니다."
+    : sp.req === "carddel" ? "프로젝트 카드가 삭제되었습니다 (HTML·볼트 md 파일 포함) — 같은 파일명으로 재업로드 가능합니다."
     : null
   const errMsg = sp.req === "cardfail" ? `카드 추가 실패: ${sp.msg || "입력을 확인하세요"}` : null
 
@@ -67,6 +68,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
               <a href={p.docPath} target="_blank" rel="noopener noreferrer" className="font-medium hover:underline">{p.title}</a>
               <span className="text-xs text-neutral-400">{p.docPath}</span>
               <span className="ml-auto text-xs text-neutral-500">{p.tags}</span>
+              <details className="inline">
+                <summary className="cursor-pointer rounded border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50">삭제</summary>
+                <form action={deleteProjectCardAction} className="mt-2">
+                  <input type="hidden" name="id" value={p.id} />
+                  <button className="rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-500">정말 삭제 (HTML·볼트 md 파일도 함께)</button>
+                </form>
+              </details>
             </div>
           ))}
         </div>

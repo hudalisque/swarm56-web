@@ -131,6 +131,35 @@ async function saveUpload(file: File, dir: string, ext: ".html" | ".md"): Promis
   return dest
 }
 
+/** 카드 삭제: DB 행 제거 + PROJECT_DELETE 감사(트랜잭션) → 파일(HTML·볼트 md)도 제거.
+ *  파일까지 지워야 동일 파일명 재업로드(= 수정 워크플로우)가 중복 거부에 안 걸림.
+ *  볼트 md 파일명은 추가 당시 PROJECT_ADD 감사의 detail에서 복원(시드 카드는 ADD 기록 없음 → md 생략). */
+export async function deleteProjectCard(id: string, actor: string) {
+  const card = await prisma.projectCard.findUnique({ where: { id } })
+  if (!card) throw new Error("카드를 찾을 수 없음")
+  const added = await prisma.adminAudit.findFirst({
+    where: { action: "PROJECT_ADD", target: card.docPath },
+    orderBy: { at: "desc" },
+  })
+  const mdName = added?.detail?.match(/vault:project\/(\S+\.md)/)?.[1] ?? null
+  await prisma.$transaction([
+    prisma.projectCard.delete({ where: { id } }),
+    prisma.adminAudit.create({
+      data: {
+        action: "PROJECT_DELETE",
+        target: card.docPath,
+        actor,
+        detail: mdName ? `vault:project/${mdName}` : "(시드 카드 — 볼트 md 보존)",
+      },
+    }),
+  ])
+  // 파일 제거는 DB 확정 후. 실패해도 삭제는 유효 — 잔여 파일은 재업로드 시 중복 거부 메시지로 드러남.
+  try { fs.unlinkSync(/*turbopackIgnore: true*/ path.join(DOCS_DIR, path.basename(card.docPath))) } catch {}
+  if (mdName) {
+    try { fs.unlinkSync(/*turbopackIgnore: true*/ path.join(VAULT_PROJECT_DIR, path.basename(mdName))) } catch {}
+  }
+}
+
 /** 카드 추가: HTML·MD 저장 → ProjectCard insert + 감사로그(한 트랜잭션).
  *  부분 실패 시 저장된 파일 롤백 — 성공 위장 금지(실패 audit 남기고 에러 전파). */
 export async function addProjectCard(

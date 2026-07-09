@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import {
   verifyPassword, createSession, destroySession, isAuthed, rateLimited,
 } from "@/lib/auth"
-import { deleteCard, restoreCard, editCard, triggerClip, triggerForceReclip, addProjectCard } from "@/lib/admin-repo"
+import { deleteCard, restoreCard, editCard, triggerClip, triggerForceReclip, addProjectCard, deleteProjectCard } from "@/lib/admin-repo"
 
 const ACTOR = "admin"
 
@@ -100,4 +100,23 @@ export async function addProjectCardAction(formData: FormData) {
   refresh()
   if (err) redirect(`/admin?req=cardfail&msg=${encodeURIComponent(err.slice(0, 200))}`)
   redirect("/admin?req=card")
+}
+
+/** 프로젝트 카드 삭제 — 파일(HTML·볼트 md)까지 제거해 동일 파일명 재업로드(수정 워크플로우) 가능. */
+export async function deleteProjectCardAction(formData: FormData) {
+  await guard()
+  const id = String(formData.get("id") || "")
+  let err: string | null = null
+  if (!id) {
+    err = "카드 id 없음"
+  } else {
+    try {
+      await deleteProjectCard(id, ACTOR)
+    } catch (e) {
+      err = e instanceof Error ? e.message : String(e)
+    }
+  }
+  refresh()
+  if (err) redirect(`/admin?req=cardfail&msg=${encodeURIComponent(err.slice(0, 200))}`)
+  redirect("/admin?req=carddel")
 }
