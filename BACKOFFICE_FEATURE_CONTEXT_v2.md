@@ -28,7 +28,7 @@
 | 파일 | 내용 |
 |---|---|
 | `personal-brand-hub/prisma/schema.prisma` | `ProjectCard` 모델 추가 |
-| `personal-brand-hub/prisma/migrations/20260709030000_project_card/` | CREATE TABLE + UNIQUE(docPath) + **시드 3장 INSERT**(기존 하드코딩 값 그대로, createdAt asc=표시순서) |
+| `personal-brand-hub/prisma/migrations/20260709030000_project_card/` | CREATE TABLE + UNIQUE(docPath) + **시드 3장 INSERT**(기존 하드코딩 값 그대로) — ※표시 순서는 **새 카드가 맨 앞**(시드=문자열·앱저장=숫자 createdAt, SQLite 숫자 우선 — Peter 확정 2026-07-09 "그냥 둬") |
 | `personal-brand-hub/lib/admin-repo.ts` | `listProjectCards()` · `addProjectCard()` — 파일 검증(.html/.md만, 4MB 상한, basename+`[a-z0-9-]` sanitize, `wx` 플래그로 덮어쓰기 방지), 부분 실패 시 저장 파일 롤백 + `PROJECT_ADD_FAILED` 감사 후 에러 전파(성공 위장 금지) |
 | `personal-brand-hub/app/admin/actions.ts` | `addProjectCardAction` — redirect는 try 밖(NEXT_REDIRECT 삼킴 방지), 실패 사유를 배너 쿼리로 전달 |
 | `personal-brand-hub/app/admin/page.tsx` | "프로젝트 카드" 섹션(현황 목록 + 추가 폼) + 성공/실패 배너 |

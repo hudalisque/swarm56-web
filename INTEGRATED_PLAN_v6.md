@@ -160,7 +160,8 @@ v5의 나머지 설계(클리퍼·채널·이미지·발췌·삭제 방식 B·�
 
 **SQLite ProjectCard (v6 신설):**
 - `id · title · description · docPath(unique, "/docs/<file>.html") · tags(쉼표 구분) · createdAt · updatedAt`
-- 정렬 = `createdAt asc`(기존 3장 시드 순서 유지, 새 카드는 뒤에). 시드 = 마이그레이션 `20260709030000_project_card`에 포함.
+- 정렬 = `createdAt asc`. 시드 = 마이그레이션 `20260709030000_project_card`에 포함.
+- **실제 표시 순서(Peter 확정 2026-07-09): 새 카드가 맨 앞, 시드 3장이 뒤.** (시드 createdAt=문자열 vs 앱 저장=숫자 → SQLite에서 숫자 우선 정렬. 발견 후 "그냥 둬" 결정 — 최신 우선이 자연스러움)
 
 **SuppressionRecord (SQLite, 별도 테이블 — 삭제 의도 보존, 방식 B):**
 - `id · originalUrl · vaultPath · deletedAt · deletedBy · reason · restoredAt(null=활성)`
