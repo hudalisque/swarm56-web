@@ -53,6 +53,13 @@
 
 ---
 
+## 🟡 LOW / INFO — 관리자 헤더 버튼 hover/커서가 밋밋함 (버그 아님, 미수정 결정)
+
+- **증상:** `/admin`의 '지금 클리핑'·'강제 갱신'·'로그아웃' 버튼이 hover 시 반응이 거의 안 느껴지고, 커서가 화살표라 안 눌리는 것처럼 보임.
+- **증거(고장 아님):** 빌드 CSS에 hover 규칙 정상 존재(`:hover` 47개, `hover:bg-amber-50`/`neutral-700`/`neutral-100` 모두 있음, HTTP served 동일). hover는 기술적으로 작동하나 색 변화가 미묘(진검정→약간 덜 검정, 흰색→아주 연한 톤). 또 **Tailwind v4가 버튼 기본 `cursor:pointer`를 제거**해 커서가 화살표.
+- **언제 터지나:** 기능 영향 없음. UX 체감만.
+- **어디를 고치나:** 원하면 `personal-brand-hub/app/admin/page.tsx` 헤더 버튼들에 `cursor-pointer` + 더 진한 hover(예: `hover:bg-amber-100`) 추가. **2026-07-03 Peter 결정: 고장 아니므로 지금 수정 안 함, 기록만.**
+
 ## ✅ 확인됨 — 문제 아님 (오해 방지용 기록)
 
 - **SESSION_SECRET**: `/opt/swarm56/app/.env`에 설정됨. dev 하드코딩 fallback 아님 → 세션 서명 안전.

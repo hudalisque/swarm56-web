@@ -51,3 +51,4 @@ web/next-env.d.ts
 
 # 서버 IP·SSH 접속정보 포함 — public repo 유출 방지 (로컬 전용)
 AGENTS.md
+AGENTS_v2.md

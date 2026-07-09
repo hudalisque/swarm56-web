@@ -1,37 +1,9 @@
 import { ArrowUpRight } from 'lucide-react'
+import { listProjectCards } from '@/lib/admin-repo'
 
-interface Project {
-  name: string
-  description: string
-  tags: string[]
-  url: string
-}
-
-const projects: Project[] = [
-  {
-    name: 'swarm56 · 프로젝트 개요',
-    description:
-      '이 사이트 자체가 프로젝트입니다. 이종 멀티에이전트(설계·디자인·구현·검증)가 협업해 만든 퍼스널 허브 — 워크플로우·아키텍처를 정리한 프로젝트 개요 문서.',
-    tags: ['Multi-Agent', 'Next.js', 'Case Study'],
-    url: '/docs/project-overview.html',
-  },
-  {
-    name: 'Small Vill 메타연구',
-    description:
-      '"Small Vill" 개발을 위한 멀티에이전트 메타연구 보고서. 연구 방향과 분석을 정리한 문서입니다.',
-    tags: ['Multi-Agent', 'Meta Research', 'Report'],
-    url: '/docs/small-vill-meta-research.html',
-  },
-  {
-    name: 'MSI 시스템 문서',
-    description:
-      '메인스트리트 투자 인텔리전스 브리프(MSI) — 8단계 멀티에이전트 파이프라인의 구조·에이전트 역할·운영 규칙을 정리한 시스템 문서.',
-    tags: ['Multi-Agent', 'Pipeline', 'Docs'],
-    url: '/docs/msi-documentation.html',
-  },
-]
-
-export function ProjectsSection() {
+// 카드는 DB(ProjectCard)에서 읽음 — 백오피스 /admin에서 추가. (하드코딩 3장은 마이그레이션 시드로 이관)
+export async function ProjectsSection() {
+  const projects = await listProjectCards()
   return (
     <section
       id="work"
@@ -53,15 +25,15 @@ export function ProjectsSection() {
       <div className="mt-7 grid grid-cols-1 gap-5 md:grid-cols-3">
         {projects.map((project) => (
           <a
-            key={project.name}
-            href={project.url}
+            key={project.id}
+            href={project.docPath}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`${project.name} 프로젝트 열기 (새 탭)`}
+            aria-label={`${project.title} 프로젝트 열기 (새 탭)`}
             className="group flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold text-ink">{project.name}</h3>
+              <h3 className="text-lg font-semibold text-ink">{project.title}</h3>
               <ArrowUpRight
                 className="size-5 text-muted-foreground transition-colors group-hover:text-brand"
                 aria-hidden="true"
@@ -71,7 +43,7 @@ export function ProjectsSection() {
               {project.description}
             </p>
             <ul className="mt-4 flex flex-wrap gap-1.5">
-              {project.tags.map((tag) => (
+              {project.tags.split(',').map((t) => t.trim()).filter(Boolean).map((tag) => (
                 <li
                   key={tag}
                   className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground"

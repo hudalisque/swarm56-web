@@ -2,7 +2,8 @@ import { redirect } from "next/navigation"
 import { isAuthed } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { listCards, listSuppressed, listSyncRuns } from "@/lib/admin-repo"
-import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction } from "./actions"
+import { logoutAction, clipNowAction, forceReclipAction, deleteAction, restoreAction, addProjectCardAction } from "./actions"
+import { listProjectCards } from "@/lib/admin-repo"
 import { EditCard } from "./edit-card"
 
 export const dynamic = "force-dynamic"
@@ -12,26 +13,32 @@ function ymd(d: Date) {
   return new Date(d).toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 16)
 }
 
-export default async function AdminPage({ searchParams }: { searchParams: Promise<{ req?: string }> }) {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ req?: string; msg?: string }> }) {
   if (!(await isAuthed())) redirect("/admin/login")
 
   const sp = await searchParams
   const reqMsg =
     sp.req === "clip" ? "클리핑을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
     : sp.req === "force" ? "강제 갱신을 요청했습니다 — 결과는 아래 SyncRun 로그에 곧 반영됩니다."
+    : sp.req === "card" ? "프로젝트 카드가 추가되었습니다 — 홈 Work/Projects에 바로 반영됩니다."
     : null
+  const errMsg = sp.req === "cardfail" ? `카드 추가 실패: ${sp.msg || "입력을 확인하세요"}` : null
 
-  const [cards, suppressed, runs, audits] = await Promise.all([
+  const [cards, suppressed, runs, audits, projectCards] = await Promise.all([
     listCards(),
     listSuppressed(),
     listSyncRuns(),
     prisma.adminAudit.findMany({ orderBy: { at: "desc" }, take: 30 }),
+    listProjectCards(),
   ])
 
   return (
     <div className="mx-auto max-w-5xl p-6 text-neutral-900">
       {reqMsg && (
         <div className="mb-4 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{reqMsg}</div>
+      )}
+      {errMsg && (
+        <div className="mb-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">{errMsg}</div>
       )}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -49,6 +56,36 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <button className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100">로그아웃</button>
           </form>
         </div>
+      </div>
+
+      {/* 프로젝트 카드 (Work/Projects) — 추가 전용, 삭제/편집은 범위 밖 */}
+      <h2 className="mb-2 text-sm font-semibold text-neutral-700">프로젝트 카드 (Work/Projects)</h2>
+      <div className="mb-8 space-y-2">
+        <div className="space-y-1">
+          {projectCards.map((p) => (
+            <div key={p.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-neutral-200 bg-white p-2 text-sm">
+              <a href={p.docPath} target="_blank" rel="noopener noreferrer" className="font-medium hover:underline">{p.title}</a>
+              <span className="text-xs text-neutral-400">{p.docPath}</span>
+              <span className="ml-auto text-xs text-neutral-500">{p.tags}</span>
+            </div>
+          ))}
+        </div>
+        <details className="rounded-lg border border-neutral-200 bg-white p-3">
+          <summary className="cursor-pointer text-sm font-medium">+ 카드 추가</summary>
+          <form action={addProjectCardAction} className="mt-3 flex max-w-xl flex-col gap-2">
+            <label className="text-xs text-neutral-500">제목</label>
+            <input name="title" required className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
+            <label className="text-xs text-neutral-500">요약 (카드에 표시될 설명)</label>
+            <textarea name="description" required rows={3} className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
+            <label className="text-xs text-neutral-500">HTML 문서 (카드 링크 대상, 영문 파일명)</label>
+            <input type="file" name="html" accept=".html" required className="text-sm" />
+            <label className="text-xs text-neutral-500">MD 문서 (볼트 지식그래프용, 영문 파일명)</label>
+            <input type="file" name="md" accept=".md" required className="text-sm" />
+            <label className="text-xs text-neutral-500">카테고리 태그 (쉼표 구분, 예: Multi-Agent, Docs)</label>
+            <input name="tags" placeholder="Multi-Agent, Docs" className="rounded-md border border-neutral-300 px-2 py-1 text-sm" />
+            <button className="mt-1 self-start rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-700">카드 추가</button>
+          </form>
+        </details>
       </div>
 
       {/* 카드 */}

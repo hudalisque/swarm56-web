@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import {
   verifyPassword, createSession, destroySession, isAuthed, rateLimited,
 } from "@/lib/auth"
-import { deleteCard, restoreCard, editCard, triggerClip, triggerForceReclip } from "@/lib/admin-repo"
+import { deleteCard, restoreCard, editCard, triggerClip, triggerForceReclip, addProjectCard } from "@/lib/admin-repo"
 
 const ACTOR = "admin"
 
@@ -75,4 +75,29 @@ export async function forceReclipAction() {
   await triggerForceReclip(ACTOR)
   refresh()
   redirect("/admin?req=force")
+}
+
+/** 프로젝트 카드 추가: 제목·요약·HTML(카드)·MD(볼트)·태그.
+ *  redirect는 try 밖에서 — NEXT_REDIRECT가 catch에 삼켜지지 않게. 실패 사유는 배너+감사로그. */
+export async function addProjectCardAction(formData: FormData) {
+  await guard()
+  const title = String(formData.get("title") || "").trim()
+  const description = String(formData.get("description") || "").trim()
+  const tags = String(formData.get("tags") || "").trim()
+  const html = formData.get("html")
+  const md = formData.get("md")
+
+  let err: string | null = null
+  if (!title || !description || !(html instanceof File) || !(md instanceof File) || html.size === 0 || md.size === 0) {
+    err = "제목·요약·HTML·MD는 모두 필수입니다"
+  } else {
+    try {
+      await addProjectCard({ title, description, tags, html, md }, ACTOR)
+    } catch (e) {
+      err = e instanceof Error ? e.message : String(e)
+    }
+  }
+  refresh()
+  if (err) redirect(`/admin?req=cardfail&msg=${encodeURIComponent(err.slice(0, 200))}`)
+  redirect("/admin?req=card")
 }

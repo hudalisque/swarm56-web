@@ -3,7 +3,8 @@
 > 최종 갱신: 2026-06-27 (설계 v4 — 옵시디언 단일소스 확정)
 > 이 README는 프로젝트 진입점입니다. 작업 전 여기부터 읽으세요.
 
-> ⚠️ **운영 이슈/미해결 위험은 [KNOWN_ISSUES.md](KNOWN_ISSUES.md)를 먼저 확인.** (repo↔서버 드리프트, config split-brain 등 — 배포·롤백 전 필독)
+> ⚠️ **운영 이슈/미해결 위험은 [KNOWN_ISSUES_v2.md](KNOWN_ISSUES_v2.md)를 먼저 확인.** (repo↔서버 드리프트, config split-brain 등 — 배포·롤백 전 필독)
+> 📚 **현행 문서는 v2 세대**: [PROJECT_OVERVIEW_v2.md](PROJECT_OVERVIEW_v2.md) · [INTEGRATED_PLAN_v6.md](INTEGRATED_PLAN_v6.md) · [DOCUMENTATION_v2.md](DOCUMENTATION_v2.md) · [PHASES_v2.md](PHASES_v2.md) · [CODE_SPEC_v2.md](CODE_SPEC_v2.md) — 무버전/구버전 파일은 시점 보존본.
 
 ## 한 줄 정의
 **Peter의 8개 채널 활동을 서버가 자동 클리핑해 옵시디언(지식 단일소스)에 전문으로 모으고, 홈페이지가 그 위에 카드 형태로 보여주는 Personal Brand Hub.** 카드 클릭 시 원문 외부 페이지로 이동.

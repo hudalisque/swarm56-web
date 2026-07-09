@@ -26,6 +26,17 @@ model FeedCard {
   @@index([channel, publishedAt])
 }
 
+// Work/Projects 카드 (백오피스에서 추가). HTML은 SWARM56_DOCS_DIR, MD는 볼트 project/에 저장.
+model ProjectCard {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  docPath     String   @unique // "/docs/<file>.html"
+  tags        String            // 쉼표 구분 문자열
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // 삭제 의도 보존(방식 B). 활성(restoredAt=null) URL은 파생/재파생에서 스킵 → 부활 X.
 model SuppressionRecord {
   id          String    @id @default(cuid())

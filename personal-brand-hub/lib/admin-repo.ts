@@ -92,3 +92,71 @@ export async function triggerClip(actor: string) {
 export async function triggerForceReclip(actor: string) {
   await writeTrigger(process.env.SWARM56_FORCE_TRIGGER || "/var/lib/swarm56/triggers/force.now", "FORCE_RECLIP", actor)
 }
+
+// ===== Work/Projects 카드 (백오피스 추가) =====
+// HTML → SWARM56_DOCS_DIR (nginx /docs/ alias 서빙, 빌드 무관 런타임 업로드)
+// MD   → 볼트 project/ — 웹→볼트 쓰기의 유일한 예외. raw/(피드 파생 대상)는 코드상 접근 경로 없음.
+//        원칙 무손상 필요 시 대기폴더+systemd .path 릴레이로 전환(BACKOFFICE_FEATURE_CONTEXT 참조).
+
+const DOCS_DIR = process.env.SWARM56_DOCS_DIR || "/var/lib/swarm56/web/docs"
+const VAULT_PROJECT_DIR = path.join(process.env.SWARM56_VAULT_DIR || "/var/lib/swarm56/vault-v5", "project")
+const MAX_UPLOAD = 4 * 1024 * 1024 // 4MB
+
+export async function listProjectCards() {
+  return prisma.projectCard.findMany({ orderBy: { createdAt: "asc" } })
+}
+
+/** 파일명 안전화: basename만 취하고(traversal 차단) [a-z0-9-]로 정규화. 확장자 불일치·빈 이름은 거부. */
+function safeName(original: string, ext: ".html" | ".md"): string {
+  const base = path.basename(original)
+  if (!base.toLowerCase().endsWith(ext)) throw new Error(`${ext} 파일만 가능: ${base}`)
+  const stem = base.slice(0, -ext.length).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "")
+  if (!stem) throw new Error(`파일명에 영문/숫자가 없음(영문 파일명으로 변경 필요): ${base}`)
+  return stem + ext
+}
+
+/** 업로드 1건 저장. 동일 파일명 존재 시 거부(wx 플래그 — 덮어쓰기 방지). 저장 경로 반환. */
+async function saveUpload(file: File, dir: string, ext: ".html" | ".md"): Promise<string> {
+  if (file.size === 0) throw new Error(`빈 파일: ${file.name}`)
+  if (file.size > MAX_UPLOAD) throw new Error(`4MB 초과: ${file.name}`)
+  const dest = path.join(/*turbopackIgnore: true*/ dir, safeName(file.name, ext))
+  fs.mkdirSync(/*turbopackIgnore: true*/ dir, { recursive: true })
+  const buf = Buffer.from(await file.arrayBuffer())
+  try {
+    fs.writeFileSync(/*turbopackIgnore: true*/ dest, buf, { flag: "wx" })
+  } catch (e: any) {
+    if (e?.code === "EEXIST") throw new Error(`동일 파일명이 이미 존재: ${path.basename(dest)}`)
+    throw e
+  }
+  return dest
+}
+
+/** 카드 추가: HTML·MD 저장 → ProjectCard insert + 감사로그(한 트랜잭션).
+ *  부분 실패 시 저장된 파일 롤백 — 성공 위장 금지(실패 audit 남기고 에러 전파). */
+export async function addProjectCard(
+  input: { title: string; description: string; tags: string; html: File; md: File },
+  actor: string,
+) {
+  const saved: string[] = []
+  try {
+    const htmlDest = await saveUpload(input.html, DOCS_DIR, ".html")
+    saved.push(htmlDest)
+    const mdDest = await saveUpload(input.md, VAULT_PROJECT_DIR, ".md")
+    saved.push(mdDest)
+    const docPath = `/docs/${path.basename(htmlDest)}`
+    await prisma.$transaction([
+      prisma.projectCard.create({
+        data: { title: input.title, description: input.description, docPath, tags: input.tags },
+      }),
+      prisma.adminAudit.create({
+        data: { action: "PROJECT_ADD", target: docPath, actor, detail: `vault:project/${path.basename(mdDest)}` },
+      }),
+    ])
+  } catch (e) {
+    for (const f of saved) {
+      try { fs.unlinkSync(/*turbopackIgnore: true*/ f) } catch {}
+    }
+    await audit("PROJECT_ADD_FAILED", input.title, actor, String(e)).catch(() => {})
+    throw e
+  }
+}
