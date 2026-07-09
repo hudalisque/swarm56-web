@@ -138,7 +138,14 @@
       </ul>
       <h3>3.3 비기능</h3>
       <p>단방향 데이터 흐름 · 멱등성·재개 가능 · <strong>볼트 쓰기 = 에이전트(raw/) + 백오피스 업로드(project/ 한정 예외)</strong>, 웹의 raw/ 접근은 코드상 불가 · 비밀은 <strong>env로만</strong> · 개인 규모(1GB VPS) 운영.</p>
-      <div class="warning-box"><strong>원칙 개정 이력(2026-07-09)</strong> — v1 "홈피/백오피스는 볼트 읽기전용" → 백오피스 카드 추가로 <strong>project/(지식그래프, 피드 파생 대상 밖) 한정 쓰기 예외</strong> 신설. 이유: 개인 규모에서 가장 단순한 구조(Peter 결정 "이번엔 간단하게"). 원칙 무손상 필요 시 <strong>중립 대기폴더 + systemd .path 릴레이</strong>(기존 트리거 패턴 재사용)로 전환 — <code>BACKOFFICE_FEATURE_CONTEXT_v2.md</code> 참조.</div>
+      <div class="warning-box"><strong>★ 핵심 의사결정 — 원칙 개정(2026-07-09)</strong> — v1 아키텍처 불변식 "홈피/백오피스는 볼트 읽기전용"을 백오피스 카드 추가를 위해 <strong>project/(지식그래프, 피드 파생 대상 밖) 한정 쓰기 예외</strong>로 개정. 두 안을 비교한 뒤 Owner가 결정: <em>"간단하게 구현했다가 나중에 필요하면 원칙대로 바꾸지 뭐. 이번에는 간단하게."</em></div>
+      <table>
+        <tr><th></th><th>직접 쓰기 (project/ 한정 예외) — 채택</th><th>대기폴더+systemd 릴레이 (예외 없음)</th></tr>
+        <tr><td>원칙</td><td>한정 예외 1개 생김</td><td>무손상</td></tr>
+        <tr><td>구현/부품</td><td>단순 (코드 몇 줄)</td><td>.path 유닛+스크립트 추가, 반영 수 초 비동기</td></tr>
+        <tr><td>실질 위험</td><td>낮음 (raw/ 접근은 코드상 차단)</td><td>더 낮음 (웹은 볼트 접근 자체가 없음)</td></tr>
+      </table>
+      <p style="font-size:12px;color:#64748b">복귀 경로: 원칙 무손상이 필요해지면 중립 대기폴더 + systemd .path 릴레이(기존 트리거 패턴 재사용)로 전환 — 재설계 트리거로 정본에 등재. 상세: <code>BACKOFFICE_FEATURE_CONTEXT_v2.md</code> §2-③.</p>
     </div>
 
     <div class="section">
